@@ -1,0 +1,2 @@
+"use client";
+export function SeatRequestCard({status,onRequest}:{status:string;onRequest:()=>void}){return <button onClick={onRequest} className="w-full rounded-xl border border-crimsonBorder bg-crimsonSoft p-3 text-left"><p className="text-xs font-extrabold text-crimson">Richiesta posto</p><p className="mt-1 text-[10px] text-muted">{status==="accepted"?"Richiesta accettata":status==="pending"?"In attesa di risposta":"Tocca per richiedere un posto"}</p></button>}

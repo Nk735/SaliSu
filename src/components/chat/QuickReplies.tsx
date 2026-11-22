@@ -1,0 +1,2 @@
+"use client";
+export function QuickReplies({onSelect}:{onSelect:(v:string)=>void}){return <div className="no-scrollbar flex gap-1.5 overflow-x-auto">{["Arrivo tra 5 minuti","Dove ci troviamo?","Perfetto, grazie!","Posso portare un bagaglio?"].map(v=><button key={v} onClick={()=>onSelect(v)} className="shrink-0 rounded-full border border-line bg-card px-2.5 py-1.5 text-[10px] font-bold text-muted">{v}</button>)}</div>}

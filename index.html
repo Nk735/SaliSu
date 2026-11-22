@@ -1,0 +1,2664 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SaliSu • Alfa Bari — Carpooling Aziendale</title>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          },
+          colors: {
+            outer: 'var(--bg-outer)',
+            base: 'var(--bg-base)',
+            card: 'var(--bg-card)',
+            subtle: 'var(--bg-subtle)',
+            line: 'var(--border-main)',
+            ink: 'var(--text-main)',
+            muted: 'var(--text-muted)',
+            accentWarm: 'var(--accent-warm)',
+            accentWarmSoft: 'var(--accent-warm-soft)',
+            accentWarmBorder: 'var(--accent-warm-border)',
+            crimson: 'var(--brand)',
+            crimsonHover: 'var(--brand-hover)',
+            crimsonSoft: 'var(--brand-soft)',
+            crimsonBorder: 'var(--brand-border)',
+            emeraldOk: '#10B981',
+            emeraldSoft: 'var(--emerald-soft)',
+            emeraldText: 'var(--emerald-text)',
+          },
+          boxShadow: {
+            card: 'var(--shadow-card)',
+            soft: 'var(--shadow-soft)',
+            crimson: 'var(--shadow-crimson)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* ==================== THEME DESIGN TOKENS ==================== */
+    :root {
+      --bg-outer: #E8E1D2;
+      --bg-base: #F4F0E6;
+      --bg-card: #FFFFFF;
+      --bg-subtle: #ECE6D8;
+      --border-main: #E5DEC9;
+      --text-main: #1C1917;
+      --text-muted: #6B655E;
+
+      --brand: #BE0F2D;
+      --brand-hover: #9B0B24;
+      --brand-soft: #FCECEF;
+      --brand-border: #F5C6CF;
+
+      /* Warm secondary accent (maps to brand-soft/crimson in light, #E0C097 gold/sand in dark) */
+      --accent-warm: #BE0F2D;
+      --accent-warm-soft: #FCECEF;
+      --accent-warm-border: #F5C6CF;
+
+      --emerald-soft: #DCFCE7;
+      --emerald-text: #059669;
+
+      --shadow-card: 0 2px 10px rgba(28, 25, 23, 0.045);
+      --shadow-soft: 0 10px 26px rgba(28, 25, 23, 0.09);
+      --shadow-crimson: 0 8px 20px rgba(190, 15, 45, 0.30);
+      --dock-bg: rgba(255, 255, 255, 0.84);
+      --dock-border: rgba(229, 222, 201, 0.9);
+      --dock-shadow: 0 12px 32px rgba(28, 25, 23, 0.14), 0 2px 8px rgba(28, 25, 23, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.92);
+      --dock-active-bg: rgba(190, 15, 45, 0.10);
+      --chat-dot-color: rgba(190, 15, 45, 0.06);
+      --scroll-thumb: #D4CBB6;
+      --shell-bezel: #221D19;
+      color-scheme: light;
+    }
+
+    /* Dark Mode Palette from User's Canva Swatch:
+       Background: #2F251C | Surfaces: #3A3A3A | Secondary: #261E16 | Text: #FFFFFF | Warm Accent: #E0C097 | Brand: #D91E3E */
+    [data-theme="dark"] {
+      --bg-outer: #1B1510;
+      --bg-base: #2F251C;
+      --bg-card: #3A3A3A;
+      --bg-subtle: #261E16;
+      --border-main: rgba(224, 192, 151, 0.22);
+      --text-main: #FFFFFF;
+      --text-muted: #D5C8B8;
+
+      --brand: #D91E3E;
+      --brand-hover: #BE0F2D;
+      --brand-soft: rgba(217, 30, 62, 0.18);
+      --brand-border: rgba(217, 30, 62, 0.42);
+
+      --accent-warm: #E0C097;
+      --accent-warm-soft: rgba(224, 192, 151, 0.16);
+      --accent-warm-border: rgba(224, 192, 151, 0.38);
+
+      --emerald-soft: rgba(16, 185, 129, 0.18);
+      --emerald-text: #34D399;
+
+      --shadow-card: 0 3px 14px rgba(0, 0, 0, 0.28);
+      --shadow-soft: 0 12px 30px rgba(0, 0, 0, 0.45);
+      --shadow-crimson: 0 8px 22px rgba(190, 15, 45, 0.44);
+      --dock-bg: rgba(58, 58, 58, 0.86);
+      --dock-border: rgba(224, 192, 151, 0.22);
+      --dock-shadow: 0 14px 36px rgba(0, 0, 0, 0.56), 0 2px 10px rgba(0, 0, 0, 0.36), inset 0 1px 0 rgba(224, 192, 151, 0.16);
+      --dock-active-bg: rgba(224, 192, 151, 0.16);
+      --chat-dot-color: rgba(224, 192, 151, 0.07);
+      --scroll-thumb: rgba(224, 192, 151, 0.28);
+      --shell-bezel: #1C1611;
+      color-scheme: dark;
+    }
+
+    /* Hide horizontal scrollbars on pill strips */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Subtle vertical scrollbar inside app viewport */
+    .app-scroll::-webkit-scrollbar {
+      width: 4px;
+    }
+    .app-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .app-scroll::-webkit-scrollbar-thumb {
+      background: var(--scroll-thumb);
+      border-radius: 9999px;
+    }
+
+    /* Solid & Seamless Pure-CSS Dotted Chat Background (Light #F4F0E6 / Dark #2F251C) */
+    .chat-wallpaper {
+      background-color: var(--bg-base);
+      background-image: radial-gradient(var(--chat-dot-color) 1.25px, transparent 1.25px);
+      background-size: 20px 20px;
+      background-position: 0 0;
+    }
+    .chat-messages-bg {
+      background-color: var(--bg-base);
+      background-image: radial-gradient(var(--chat-dot-color) 1.25px, transparent 1.25px);
+      background-size: 20px 20px;
+      background-position: 0 0;
+      background-attachment: local;
+    }
+
+    /* Smooth theme transitions */
+    /* Apple iOS / visionOS Floating Frosted Glass Dock */
+    .apple-dock {
+      background-color: var(--dock-bg);
+      border: 1px solid var(--dock-border);
+      border-radius: 30px;
+      box-shadow: var(--dock-shadow);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+    }
+
+    /* Subtle iOS-style Active Pill Indicator */
+    .dock-item {
+      border-radius: 20px;
+      transition: background-color 0.22s ease, color 0.18s ease, transform 0.18s ease;
+    }
+    .dock-item:active {
+      transform: scale(0.94);
+    }
+    .dock-item.is-active {
+      background-color: var(--dock-active-bg);
+    }
+
+    /* Harmoniously Integrated Center "+" Squircle Button */
+    .fab-plus {
+      width: 50px;
+      height: 50px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #D91E3E 0%, #BE0F2D 65%, #9B0B24 100%);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      box-shadow:
+        0 8px 18px -3px rgba(190, 15, 45, 0.45),
+        0 2px 6px rgba(0, 0, 0, 0.18),
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.38),
+        inset 0 -2px 4px rgba(95, 5, 20, 0.28);
+      transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.24s ease;
+    }
+    .fab-plus:hover {
+      transform: translateY(-1.5px) scale(1.06);
+      box-shadow:
+        0 12px 22px -3px rgba(190, 15, 45, 0.56),
+        0 3px 8px rgba(0, 0, 0, 0.22),
+        inset 0 1.5px 1.5px rgba(255, 255, 255, 0.48);
+    }
+    .fab-plus:active {
+      transform: scale(0.92);
+    }
+    .fab-plus-icon {
+      transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .fab-plus:hover .fab-plus-icon,
+    .fab-plus:active .fab-plus-icon {
+      transform: rotate(90deg);
+    }
+
+    /* Micro Animations */
+    @keyframes heartPop {
+      0% { transform: scale(1); }
+      35% { transform: scale(1.34); }
+      68% { transform: scale(0.9); }
+      100% { transform: scale(1); }
+    }
+    .animate-heart-pop { animation: heartPop 0.34s cubic-bezier(0.22, 1, 0.36, 1); }
+
+    @keyframes typingBounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-4px); opacity: 1; }
+    }
+    .typing-dot { animation: typingBounce 1.2s infinite ease-in-out; }
+    .typing-dot:nth-child(2) { animation-delay: 0.16s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.32s; }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); opacity: 0.6; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes slideInRight {
+      from { transform: translateX(100%); }
+      to { transform: translateX(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .animate-slide-up { animation: slideUp 0.26s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .animate-slide-right { animation: slideInRight 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .animate-fade-in { animation: fadeIn 0.18s ease-out forwards; }
+  </style>
+</head>
+<body class="bg-outer text-ink font-sans antialiased selection:bg-crimsonSoft selection:text-crimson flex items-center justify-center min-h-[100dvh] m-0 p-0 overflow-hidden">
+
+  <!-- Ambient Desktop Glow -->
+  <div class="hidden sm:block fixed inset-0 pointer-events-none overflow-hidden">
+    <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[560px] h-[560px] bg-[#BE0F2D]/12 rounded-full blur-[130px]"></div>
+    <div class="absolute -bottom-40 right-1/3 w-[440px] h-[440px] bg-[#E0C097]/15 rounded-full blur-[130px]"></div>
+  </div>
+
+  <!-- Mobile App Shell (Full-screen on mobile, 430px phone frame on desktop) -->
+  <div id="app-shell" style="border-color: var(--shell-bezel);" class="relative w-full sm:max-w-[430px] h-[100dvh] sm:h-[92dvh] sm:max-h-[890px] bg-base sm:rounded-[2.4rem] sm:border-[6px] sm:shadow-[0_28px_80px_rgba(0,0,0,0.38)] flex flex-col overflow-hidden">
+
+    <!-- ==================== TOP HEADER ==================== -->
+    <header class="shrink-0 px-4 py-3 bg-card/95 backdrop-blur-md border-b border-line z-30 flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <!-- Brand Mark -->
+        <div class="w-9 h-9 rounded-xl bg-crimson text-white flex items-center justify-center shadow-crimson shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 17L19 7m0 0h-8m8 0v8"/>
+          </svg>
+        </div>
+        <div class="min-w-0">
+          <div class="flex items-center gap-1.5">
+            <h1 class="text-lg font-extrabold tracking-tight text-ink leading-none">SaliSu</h1>
+            <span class="px-1.5 py-0.5 text-[10px] font-bold tracking-wider uppercase rounded-md bg-accentWarmSoft text-accentWarm border border-accentWarmBorder shrink-0">Alfa Bari</span>
+          </div>
+          <div class="flex items-center gap-1 mt-0.5 text-[11px] text-muted font-medium truncate">
+            <svg class="w-3 h-3 text-emeraldOk shrink-0" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/>
+            </svg>
+            <span class="truncate">Deloitte • Verificato</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Coffee Support Icon Button -->
+      <button onclick="openCoffeeModal()" aria-label="Offrimi un caffè" title="Offrimi un caffè"
+        class="relative p-2.5 rounded-xl bg-subtle hover:bg-accentWarmSoft border border-line text-accentWarm shadow-card active:scale-95 shrink-0">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M17 8h1a4 4 0 110 8h-1M3 8h14v9a4 4 0 01-4 4H7a4 4 0 01-4-4V8zm3-4v2m4-2v2m4-2v2"/>
+        </svg>
+        <span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-crimson ring-2 ring-card"></span>
+      </button>
+    </header>
+
+    <!-- ==================== MAIN SCROLLABLE VIEWPORT ==================== -->
+    <main id="main-scroll" class="flex-1 overflow-y-auto app-scroll pb-[112px]">
+
+      <!-- ==================== TAB 1: CHAT ARCHIVE (LEFT) ==================== -->
+      <section id="view-chat" class="hidden px-4 pt-4 pb-6 space-y-3.5">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-extrabold text-ink tracking-tight">Messaggi</h2>
+            <p class="text-xs text-muted font-medium">Organizza i passaggi per Bari Centro e Lungomare</p>
+          </div>
+          <span id="chat-archive-count" class="px-2.5 py-1 rounded-full bg-card border border-line text-[11px] font-bold text-accentWarm shadow-card"></span>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="relative">
+          <svg class="w-4 h-4 text-muted absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
+          </svg>
+          <input id="chat-search-input" type="text" oninput="renderChatArchive()" placeholder="Cerca collega, azienda o zona..."
+            class="w-full bg-card border border-line rounded-2xl pl-10 pr-4 py-2.5 text-sm text-ink placeholder-muted/70 shadow-card focus:outline-none focus:border-accentWarm">
+        </div>
+
+        <!-- Quick Filter Pills: Tutte / Non lette / Preferiti ♥ -->
+        <div id="chat-filter-pills" class="flex items-center gap-2"></div>
+
+        <!-- Conversations List -->
+        <div id="chat-archive-list" class="space-y-2.5 pt-0.5"></div>
+      </section>
+
+      <!-- ==================== TAB 2: HOME (BACHECA PASSAGGI) ==================== -->
+      <section id="view-home" class="block">
+        <!-- Sticky Filter Panel -->
+        <div class="sticky top-0 z-20 bg-base/95 backdrop-blur-md border-b border-line px-4 pt-3 pb-3 space-y-2.5">
+
+          <!-- 1. Day Pills (Tutti, Oggi, Domani, Lun–Ven) -->
+          <div id="day-pills" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5"></div>
+
+          <!-- 2. Andata / Ritorno Segmented Control -->
+          <div class="grid grid-cols-2 p-1 rounded-xl bg-card border border-line shadow-card">
+            <button id="btn-dir-andata" onclick="setDirection('andata')"
+              class="py-1.5 px-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+              </svg>
+              Andata
+            </button>
+            <button id="btn-dir-ritorno" onclick="setDirection('ritorno')"
+              class="py-1.5 px-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12"/>
+              </svg>
+              Ritorno
+            </button>
+          </div>
+
+          <!-- 3. Quick Destination Filter (ONLY: Tutte / Bari Centro / Lungomare) -->
+          <div id="dest-pills" class="grid grid-cols-3 gap-1.5"></div>
+
+          <!-- 4. Zone Select + Solo mia azienda Toggle -->
+          <div class="flex items-center gap-2">
+            <div class="relative flex-1 min-w-0">
+              <select id="filter-zone" onchange="setZoneFilter(this.value)"
+                class="w-full appearance-none bg-card border border-line text-ink text-xs font-semibold rounded-xl pl-3 pr-7 py-2.5 shadow-card focus:outline-none focus:border-accentWarm truncate">
+                <option value="ALL">Tutte le zone di partenza</option>
+                <option value="Poggiofranco">Poggiofranco</option>
+                <option value="Carrassi">Carrassi</option>
+                <option value="Japigia">Japigia</option>
+                <option value="Modugno">Modugno</option>
+                <option value="Bitonto">Bitonto</option>
+                <option value="Triggiano">Triggiano</option>
+                <option value="Molfetta">Molfetta</option>
+                <option value="San Paolo">San Paolo</option>
+                <option value="Noicattaro">Noicattaro</option>
+              </select>
+              <svg class="w-3.5 h-3.5 text-muted pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </div>
+
+            <!-- Solo mia azienda Switch -->
+            <button id="btn-company-toggle" onclick="toggleCompanyFilter()"
+              class="shrink-0 flex items-center gap-2 px-2.5 py-2 rounded-xl border text-xs font-semibold active:scale-95 shadow-card">
+              <span id="company-switch-track" class="w-7 h-4 rounded-full p-0.5 flex items-center">
+                <span id="company-switch-thumb" class="w-3 h-3 rounded-full bg-white shadow transition-transform"></span>
+              </span>
+              <span>Solo mia azienda</span>
+            </button>
+          </div>
+
+          <!-- Results Counter -->
+          <div class="flex items-center justify-between text-[11px] text-muted pt-0.5">
+            <span>Tocca il <span class="text-crimson font-bold">♥</span> per salvare tra i Compagni</span>
+            <span id="results-count" class="font-bold text-ink"></span>
+          </div>
+        </div>
+
+        <!-- Ride Cards Feed -->
+        <div id="ride-feed" class="px-4 pt-3.5 pb-4 space-y-3.5"></div>
+      </section>
+
+      <!-- ==================== TAB 4: COMPAGNI DI VIAGGIO ==================== -->
+      <section id="view-compagni" class="hidden px-4 pt-4 pb-6 space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-extrabold text-ink tracking-tight">Compagni di viaggio</h2>
+            <p class="text-xs text-muted font-medium">I colleghi salvati con il cuore ♥</p>
+          </div>
+          <span id="favorites-count" class="px-2.5 py-1 rounded-full bg-crimsonSoft border border-crimsonBorder text-[11px] font-bold text-crimson"></span>
+        </div>
+
+        <div id="compagni-list" class="space-y-3"></div>
+      </section>
+
+      <!-- ==================== TAB 5: PROFILO (RIGHT) ==================== -->
+      <section id="view-profilo" class="hidden px-4 pt-4 pb-6 space-y-4">
+
+        <!-- 1. User Identity Card + Preferred Destination -->
+        <div class="p-4 rounded-2xl bg-card border border-line shadow-card space-y-3.5">
+          <div class="flex items-center gap-3.5">
+            <div class="w-12 h-12 rounded-2xl bg-crimson text-white flex items-center justify-center font-extrabold text-base shadow-crimson shrink-0">
+              NC
+            </div>
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-1.5">
+                <h2 class="text-base font-extrabold text-ink truncate">Nicola Cucinella</h2>
+                <svg class="w-4 h-4 text-emeraldOk shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/>
+                </svg>
+              </div>
+              <p class="text-xs text-muted truncate">nicola.cucinella@deloitte.it</p>
+              <div class="flex items-center gap-2 mt-1.5 flex-wrap">
+                <span class="px-2 py-0.5 rounded-md bg-accentWarmSoft border border-accentWarmBorder text-[11px] font-bold text-accentWarm">
+                  Deloitte
+                </span>
+                <span class="text-xs text-muted font-medium">Zona: Modugno</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Preferred Destination (ONLY Bari Centro / Lungomare) -->
+          <div class="pt-3 border-t border-line">
+            <label class="block text-[11px] font-bold uppercase tracking-wider text-muted mb-2">Destinazione preferita</label>
+            <div id="profile-dest-selector" class="grid grid-cols-2 gap-2"></div>
+          </div>
+        </div>
+
+        <!-- 2. Punto di partenza preferito (Google Maps) -->
+        <div class="p-4 rounded-2xl bg-card border border-line shadow-card space-y-3">
+          <div class="flex items-start justify-between gap-2">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <div class="w-9 h-9 rounded-xl bg-accentWarmSoft border border-accentWarmBorder text-accentWarm flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.1" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+              </div>
+              <div class="min-w-0">
+                <h3 class="text-sm font-extrabold text-ink leading-tight">Punto di partenza preferito</h3>
+                <p class="text-[11px] text-muted font-medium">Incolla un link Google Maps per partire comodo</p>
+              </div>
+            </div>
+            <button type="button" onclick="fillBariMapsExample()"
+              class="shrink-0 px-2.5 py-1 rounded-lg bg-subtle hover:bg-accentWarmSoft border border-line text-[10px] font-bold text-accentWarm active:scale-95">
+              Usa esempio Bari
+            </button>
+          </div>
+
+          <!-- Saved Status Preview Badge -->
+          <div id="maps-saved-preview" class="hidden p-2.5 rounded-xl bg-subtle border border-line flex items-center justify-between gap-2">
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-1.5">
+                <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-emeraldSoft text-emeraldText text-[10px] font-extrabold">
+                  ✓ Link Maps salvato
+                </span>
+              </div>
+              <div id="maps-preview-label" class="text-xs font-bold text-ink truncate mt-1"></div>
+              <div id="maps-preview-url" class="text-[10px] text-muted truncate"></div>
+            </div>
+            <a id="maps-open-link" href="#" target="_blank" rel="noopener noreferrer"
+              class="shrink-0 px-2.5 py-1.5 rounded-lg bg-card border border-line text-[11px] font-bold text-accentWarm hover:border-accentWarmBorder flex items-center gap-1 active:scale-95">
+              <span>Apri su Maps</span>
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+              </svg>
+            </a>
+          </div>
+
+          <!-- Inputs -->
+          <div class="space-y-2.5">
+            <div>
+              <label for="profile-maps-label" class="block text-[11px] font-bold text-muted mb-1">Etichetta breve</label>
+              <input id="profile-maps-label" type="text" maxlength="60" placeholder="Es. Poggiofranco – Bar delle Rose"
+                class="w-full bg-subtle border border-line rounded-xl px-3 py-2 text-xs font-medium text-ink placeholder-muted/70 focus:outline-none focus:border-accentWarm">
+            </div>
+            <div>
+              <label for="profile-maps-url" class="block text-[11px] font-bold text-muted mb-1">Link Google Maps</label>
+              <input id="profile-maps-url" type="url" placeholder="https://maps.app.goo.gl/... oppure google.com/maps/..."
+                class="w-full bg-subtle border border-line rounded-xl px-3 py-2 text-xs font-medium text-ink placeholder-muted/70 focus:outline-none focus:border-accentWarm">
+            </div>
+          </div>
+
+          <button type="button" onclick="saveProfileMapsLocation()"
+            class="w-full py-2.5 px-4 rounded-xl bg-crimson hover:bg-crimsonHover text-white font-bold text-xs flex items-center justify-center gap-2 shadow-crimson active:scale-[0.98]">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+            </svg>
+            Salva posizione
+          </button>
+        </div>
+
+        <!-- 3. Aspetto: Dark Mode Toggle Card -->
+        <div class="p-4 rounded-2xl bg-card border border-line shadow-card">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-muted mb-2.5">Aspetto</div>
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+              <div id="theme-icon-box" class="w-10 h-10 rounded-xl bg-subtle border border-line text-accentWarm flex items-center justify-center shrink-0"></div>
+              <div class="min-w-0">
+                <div class="text-sm font-extrabold text-ink">Modalità scura</div>
+                <div id="theme-status-desc" class="text-[11px] text-muted font-medium truncate">Tema chiaro avorio attivo</div>
+              </div>
+            </div>
+
+            <!-- Accessible Dark Mode Switch -->
+            <button id="dark-mode-toggle" type="button" role="switch" aria-checked="false" onclick="toggleDarkMode()"
+              class="shrink-0 w-12 h-7 rounded-full p-1 flex items-center bg-subtle border border-line">
+              <span id="dark-mode-thumb" class="w-5 h-5 rounded-full bg-white shadow-md transition-transform translate-x-0"></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4. My Active Trips -->
+        <div>
+          <div class="flex items-center justify-between mb-2.5">
+            <div>
+              <h3 class="text-sm font-extrabold text-ink">I miei tragitti</h3>
+              <p class="text-[11px] text-muted">Metti in pausa quando sei in smart working</p>
+            </div>
+            <button onclick="openAddTripModal()"
+              class="text-xs font-bold text-accentWarm hover:bg-accentWarmSoft px-2.5 py-1.5 rounded-xl bg-card border border-accentWarmBorder shadow-card active:scale-95">
+              + Nuovo
+            </button>
+          </div>
+          <div id="my-trips-list" class="space-y-3"></div>
+        </div>
+
+        <!-- 5. Coffee Support Card -->
+        <div class="p-4 rounded-2xl bg-card border border-accentWarmBorder shadow-card relative overflow-hidden">
+          <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-accentWarmSoft pointer-events-none"></div>
+          <div class="relative flex items-start gap-3">
+            <div class="w-10 h-10 rounded-xl bg-accentWarmSoft border border-accentWarmBorder text-accentWarm flex items-center justify-center text-lg shrink-0">
+              ☕
+            </div>
+            <div class="flex-1">
+              <h4 class="text-sm font-extrabold text-ink">Offrimi un caffè</h4>
+              <p class="text-xs text-muted mt-1 leading-relaxed">
+                SaliSu è gratuita in fase Alfa per Bari. Se ti aiuta a raggiungere Bari Centro o Lungomare, sostieni la pubblicazione sugli store ufficiali!
+              </p>
+              <button onclick="openCoffeeModal()"
+                class="mt-3 w-full py-2.5 px-4 rounded-xl bg-crimson hover:bg-crimsonHover text-white font-bold text-xs flex items-center justify-center gap-2 shadow-crimson active:scale-[0.98]">
+                <span>☕</span> Offrimi un caffè
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <!-- ==================== FLOATING APPLE-STYLE BOTTOM DOCK ==================== -->
+    <nav aria-label="Navigazione principale"
+      class="apple-dock absolute bottom-3.5 left-3.5 right-3.5 z-30 px-2 py-1.5 grid grid-cols-5 items-center gap-0.5">
+
+      <!-- 1. Chat -->
+      <button id="nav-chat" onclick="switchTab('chat')"
+        class="dock-item relative flex flex-col items-center justify-center gap-0.5 py-1.5 px-1 text-muted hover:text-ink">
+        <div class="relative">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.1" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+          </svg>
+          <span id="nav-chat-badge" class="hidden absolute -top-1.5 -right-2 min-w-[17px] h-[17px] px-1 rounded-full bg-crimson text-white text-[10px] font-extrabold flex items-center justify-center ring-2 ring-card">0</span>
+        </div>
+        <span class="text-[10px] font-bold leading-tight">Chat</span>
+      </button>
+
+      <!-- 2. Home -->
+      <button id="nav-home" onclick="switchTab('home')"
+        class="dock-item is-active flex flex-col items-center justify-center gap-0.5 py-1.5 px-1 text-accentWarm">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.1" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+        </svg>
+        <span class="text-[10px] font-bold leading-tight">Home</span>
+      </button>
+
+      <!-- 3. Harmoniously Integrated Center "+" Button -->
+      <div class="flex items-center justify-center">
+        <button onclick="openAddTripModal()" aria-label="Inserisci Tragitto" title="Inserisci Tragitto"
+          class="fab-plus text-white flex items-center justify-center cursor-pointer focus:outline-none">
+          <svg class="fab-plus-icon w-6 h-6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <path d="M12 5v14M5 12h14"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- 4. Compagni -->
+      <button id="nav-compagni" onclick="switchTab('compagni')"
+        class="dock-item flex flex-col items-center justify-center gap-0.5 py-1.5 px-1 text-muted hover:text-ink">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.1" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+        </svg>
+        <span class="text-[10px] font-bold leading-tight">Compagni</span>
+      </button>
+
+      <!-- 5. Profilo -->
+      <button id="nav-profilo" onclick="switchTab('profilo')"
+        class="dock-item flex flex-col items-center justify-center gap-0.5 py-1.5 px-1 text-muted hover:text-ink">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.1" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+        </svg>
+        <span class="text-[10px] font-bold leading-tight">Profilo</span>
+      </button>
+    </nav>
+
+    <!-- ==================== OVERLAY: NATIVE IN-APP CHAT ==================== -->
+    <div id="overlay-chat" class="hidden absolute inset-0 z-[45] bg-base chat-wallpaper flex flex-col animate-slide-right overflow-hidden">
+
+      <!-- 1. Chat Header -->
+      <div class="shrink-0 px-3 py-2.5 bg-card border-b border-line shadow-card flex items-center justify-between gap-2 z-10">
+        <div class="flex items-center gap-2 min-w-0">
+          <button onclick="closeChatOverlay()" aria-label="Indietro"
+            class="p-2 rounded-xl text-ink hover:bg-subtle active:scale-95 shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+            </svg>
+          </button>
+
+          <div class="relative shrink-0">
+            <div id="chat-header-avatar" class="w-10 h-10 rounded-full flex items-center justify-center text-white font-extrabold text-xs shadow-sm"></div>
+            <span id="chat-header-online-dot" class="hidden absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emeraldOk ring-2 ring-card"></span>
+          </div>
+
+          <div class="min-w-0">
+            <div class="flex items-center gap-1.5">
+              <h3 id="chat-header-name" class="text-sm font-extrabold text-ink truncate"></h3>
+              <span id="chat-header-company" class="px-1.5 py-0.5 rounded-md bg-accentWarmSoft text-accentWarm border border-accentWarmBorder text-[10px] font-bold shrink-0"></span>
+            </div>
+            <p id="chat-header-status" class="text-[11px] font-medium truncate mt-0.5"></p>
+          </div>
+        </div>
+
+        <!-- Synchronized Favorite Heart -->
+        <button id="chat-header-heart" onclick="toggleFavoriteFromChat()" aria-label="Salva nei Compagni"
+          class="w-10 h-10 rounded-xl border flex items-center justify-center active:scale-90 shrink-0"></button>
+      </div>
+
+      <!-- 2. Pinned Ride Context Card -->
+      <div class="shrink-0 px-3 py-2.5 bg-base/95 backdrop-blur-sm border-b border-line/70 z-10">
+        <div class="p-3 rounded-2xl bg-card border border-line shadow-card flex items-center justify-between gap-2.5">
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-1.5 text-xs font-extrabold text-ink truncate">
+              <span class="w-2 h-2 rounded-full bg-crimson shrink-0"></span>
+              <span id="chat-ctx-route" class="truncate"></span>
+            </div>
+            <div id="chat-ctx-meta" class="text-[11px] text-muted font-medium mt-0.5 truncate"></div>
+          </div>
+          <button id="chat-ctx-action" onclick="handleSeatRequest()"
+            class="shrink-0 px-3 py-1.5 rounded-xl text-[11px] font-bold active:scale-95"></button>
+        </div>
+      </div>
+
+      <!-- 3. Messages Thread -->
+      <div id="chat-messages-area" class="flex-1 overflow-y-auto app-scroll chat-messages-bg px-3.5 py-3 space-y-2.5"></div>
+
+      <!-- 4 & 5. Coherent Bottom Dock: Quick Replies + Input Bar -->
+      <div class="shrink-0 bg-base/95 backdrop-blur-md border-t border-line/70 pt-2 pb-3.5 z-10">
+        <!-- Quick Reply Chips -->
+        <div class="px-3 pb-2">
+          <div id="chat-quick-replies" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar"></div>
+        </div>
+
+        <!-- Floating Pill Input Bar -->
+        <form onsubmit="handleSendMessage(event)" class="px-3">
+          <div class="flex items-center gap-1.5 bg-card border border-line rounded-full p-1.5 pl-2 shadow-soft focus-within:border-accentWarm">
+            <!-- Map Pin: Sends Saved Google Maps Point from Profile -->
+            <button type="button" onclick="sendSavedMapsPointInChat()" title="Invia il tuo punto Google Maps" aria-label="Invia punto Google Maps"
+              class="w-9 h-9 rounded-full bg-subtle hover:bg-accentWarmSoft text-accentWarm flex items-center justify-center active:scale-90 shrink-0">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+            </button>
+
+            <input id="chat-input" type="text" autocomplete="off" placeholder="Scrivi un messaggio..."
+              class="flex-1 min-w-0 bg-transparent px-2 py-1.5 text-sm text-ink placeholder-muted/70 focus:outline-none">
+
+            <!-- Crimson Send Button -->
+            <button type="submit" aria-label="Invia messaggio"
+              class="w-9 h-9 rounded-full bg-crimson hover:bg-crimsonHover text-white flex items-center justify-center shadow-crimson active:scale-90 shrink-0">
+              <svg class="w-4 h-4 translate-x-[1px]" fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"/>
+              </svg>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ==================== MODAL: INSERISCI TRAGITTO ("+") ==================== -->
+    <div id="modal-add-trip" class="hidden absolute inset-0 z-50 bg-black/60 backdrop-blur-[2px] flex items-end justify-center animate-fade-in" onclick="closeModalOnBackdrop(event, 'modal-add-trip')">
+      <div class="w-full max-h-[92%] bg-base border-t border-line rounded-t-3xl flex flex-col animate-slide-up shadow-2xl overflow-hidden">
+        <div class="shrink-0 px-5 pt-4 pb-3 bg-card border-b border-line flex items-center justify-between">
+          <div>
+            <h3 class="text-base font-extrabold text-ink">Nuovo Tragitto</h3>
+            <p class="text-[11px] text-muted font-medium">Destinazioni Alfa: Bari Centro e Lungomare</p>
+          </div>
+          <button onclick="closeModal('modal-add-trip')" class="p-1.5 rounded-xl text-muted hover:text-ink hover:bg-subtle">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+
+        <form id="add-trip-form" onsubmit="handleAddTripSubmit(event)" class="flex-1 overflow-y-auto app-scroll p-5 space-y-4">
+          <!-- Offro / Cerco Toggle -->
+          <div class="grid grid-cols-2 p-1 rounded-xl bg-card border border-line shadow-card">
+            <button type="button" id="form-type-offer" onclick="setFormType('offer')"
+              class="py-2 px-3 rounded-lg text-xs font-bold bg-crimson text-white shadow-sm">
+              🚗 Offro passaggio
+            </button>
+            <button type="button" id="form-type-request" onclick="setFormType('request')"
+              class="py-2 px-3 rounded-lg text-xs font-bold text-muted">
+              🙋 Cerco passaggio
+            </button>
+          </div>
+
+          <!-- Zona di Partenza -->
+          <div>
+            <label for="input-zone" class="block text-xs font-bold text-ink mb-1.5">Zona di partenza</label>
+            <select id="input-zone" required
+              class="w-full bg-card border border-line rounded-xl px-3.5 py-2.5 text-xs font-semibold text-ink focus:outline-none focus:border-accentWarm">
+              <option value="Poggiofranco">Poggiofranco</option>
+              <option value="Carrassi">Carrassi</option>
+              <option value="Japigia">Japigia</option>
+              <option value="Modugno" selected>Modugno</option>
+              <option value="Bitonto">Bitonto</option>
+              <option value="Triggiano">Triggiano</option>
+              <option value="Molfetta">Molfetta</option>
+              <option value="San Paolo">San Paolo</option>
+              <option value="Noicattaro">Noicattaro</option>
+            </select>
+          </div>
+
+          <!-- Quick Attach Saved Google Maps Point from Profile -->
+          <div class="p-3 rounded-2xl bg-card border border-line space-y-2">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-bold text-ink flex items-center gap-1.5">
+                <svg class="w-4 h-4 text-accentWarm" fill="none" stroke="currentColor" stroke-width="2.1" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                Punto Google Maps
+              </span>
+              <button type="button" id="btn-attach-profile-maps" onclick="toggleAttachProfileMaps()"
+                class="px-2.5 py-1 rounded-lg text-[11px] font-bold border active:scale-95">
+                Allega dal Profilo
+              </button>
+            </div>
+            <p id="form-maps-status" class="text-[11px] text-muted leading-snug"></p>
+          </div>
+
+          <!-- Destinazione di arrivo (ONLY Bari Centro / Lungomare) -->
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1.5">Destinazione di arrivo</label>
+            <div id="form-dest-container" class="grid grid-cols-2 gap-2.5"></div>
+          </div>
+
+          <!-- Giorni settimana -->
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1.5">Giorni della settimana</label>
+            <div id="form-days-container" class="grid grid-cols-5 gap-2"></div>
+            <p id="form-days-error" class="hidden text-[11px] text-crimson font-semibold mt-1">Seleziona almeno un giorno.</p>
+          </div>
+
+          <!-- Orari Andata / Ritorno -->
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label for="input-time-go" class="block text-xs font-bold text-ink mb-1.5">Ora andata</label>
+              <input id="input-time-go" type="time" value="08:15" required
+                class="w-full bg-card border border-line rounded-xl px-3 py-2.5 text-sm font-bold text-ink focus:outline-none focus:border-accentWarm">
+            </div>
+            <div>
+              <label for="input-time-back" class="block text-xs font-bold text-ink mb-1.5">Ora ritorno</label>
+              <input id="input-time-back" type="time" value="18:00" required
+                class="w-full bg-card border border-line rounded-xl px-3 py-2.5 text-sm font-bold text-ink focus:outline-none focus:border-accentWarm">
+            </div>
+          </div>
+
+          <!-- Posti disponibili -->
+          <div id="form-seats-wrapper">
+            <label class="block text-xs font-bold text-ink mb-1.5">Posti disponibili</label>
+            <div id="form-seats-container" class="grid grid-cols-4 gap-2"></div>
+          </div>
+
+          <!-- Note brevi -->
+          <div>
+            <label for="input-note" class="block text-xs font-bold text-ink mb-1.5">Note brevi <span class="text-muted font-normal">(opzionale)</span></label>
+            <input id="input-note" type="text" maxlength="90" placeholder="Es. Passo dalla tangenziale, flessibile di 10 min"
+              class="w-full bg-card border border-line rounded-xl px-3.5 py-2.5 text-xs text-ink placeholder-muted/70 focus:outline-none focus:border-accentWarm">
+          </div>
+
+          <button type="submit"
+            class="w-full py-3.5 rounded-xl bg-crimson hover:bg-crimsonHover text-white font-extrabold text-sm shadow-crimson active:scale-[0.98]">
+            Pubblica su SaliSu
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ==================== MODAL: OFFRIMI UN CAFFÈ ==================== -->
+    <div id="modal-coffee" class="hidden absolute inset-0 z-50 bg-black/60 backdrop-blur-[2px] flex items-center justify-center p-4 animate-fade-in" onclick="closeModalOnBackdrop(event, 'modal-coffee')">
+      <div class="w-full max-w-[380px] bg-card border border-line rounded-3xl p-5 shadow-2xl space-y-4">
+        <div class="flex items-start justify-between">
+          <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 rounded-2xl bg-accentWarmSoft border border-accentWarmBorder text-accentWarm flex items-center justify-center text-xl">
+              ☕
+            </div>
+            <div>
+              <h3 class="text-base font-extrabold text-ink">Offrimi un caffè</h3>
+              <p class="text-[11px] text-muted font-medium">Porta SaliSu sugli store ufficiali</p>
+            </div>
+          </div>
+          <button onclick="closeModal('modal-coffee')" class="p-1.5 rounded-xl text-muted hover:text-ink hover:bg-subtle">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+
+        <p class="text-xs text-muted leading-relaxed">
+          Questa fase Alfa per Bari è completamente gratuita. Se l'app ti è utile per raggiungere Bari Centro o Lungomare, un caffè aiuta a coprire i costi degli store!
+        </p>
+
+        <!-- Progress Bars -->
+        <div class="space-y-3.5 p-3.5 rounded-2xl bg-subtle border border-line">
+          <div>
+            <div class="flex items-center justify-between text-xs mb-1.5">
+              <span class="font-bold text-ink flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emeraldOk"></span>
+                Google Play <span class="text-[10px] text-muted font-normal">(una tantum)</span>
+              </span>
+              <span id="gplay-amount" class="font-extrabold text-emeraldText">$19 / $25</span>
+            </div>
+            <div class="w-full h-2 rounded-full bg-card border border-line overflow-hidden">
+              <div id="gplay-bar" class="h-full rounded-full bg-emeraldOk transition-all duration-500" style="width: 76%"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between text-xs mb-1.5">
+              <span class="font-bold text-ink flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-crimson"></span>
+                App Store <span class="text-[10px] text-muted font-normal">(annuale)</span>
+              </span>
+              <span id="apple-amount" class="font-extrabold text-accentWarm">$38 / $99</span>
+            </div>
+            <div class="w-full h-2 rounded-full bg-card border border-line overflow-hidden">
+              <div id="apple-bar" class="h-full rounded-full bg-crimson transition-all duration-500" style="width: 38%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5">
+          <button onclick="simulateDonation(2, 'Ko-fi')"
+            class="py-2.5 px-3 rounded-xl bg-accentWarmSoft border border-accentWarmBorder text-accentWarm font-bold text-xs flex items-center justify-center gap-1.5 active:scale-95">
+            <span>♥</span> Ko-fi ($2)
+          </button>
+          <button onclick="simulateDonation(3, 'Buy Me a Coffee')"
+            class="py-2.5 px-3 rounded-xl bg-crimson hover:bg-crimsonHover text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-crimson active:scale-95">
+            <span>☕</span> Caffè ($3)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TOAST NOTIFICATION ==================== -->
+    <div id="toast" class="pointer-events-none opacity-0 translate-y-3 transition-all duration-300 absolute bottom-[92px] left-4 right-4 z-50 flex justify-center">
+      <div class="px-4 py-2.5 rounded-full bg-[#1C1917] text-[#F4F0E6] text-xs font-bold shadow-xl flex items-center gap-2 border border-[#E0C097]/30">
+        <span class="w-2 h-2 rounded-full bg-[#D91E3E] shrink-0"></span>
+        <span id="toast-text"></span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== APPLICATION LOGIC ==================== -->
+  <script>
+    // Exclusive 2 Destinations for Alfa Bari
+    const DESTINATIONS = ['Bari Centro', 'Lungomare'];
+
+    // Current User Profile
+    const CURRENT_USER = {
+      id: 'me',
+      name: 'Nicola Cucinella',
+      initials: 'NC',
+      company: 'Deloitte',
+      defaultZone: 'Modugno',
+      preferredDest: 'Bari Centro'
+    };
+
+    // Map Today/Tomorrow to weekdays for realistic filtering
+    const WEEKDAYS = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven'];
+    const WEEKDAY_INITIALS = ['L', 'M', 'M', 'G', 'V'];
+    const DAY_FILTER_OPTIONS = [
+      { key: 'ALL', label: 'Tutti', matchDay: null },
+      { key: 'OGGI', label: 'Oggi', matchDay: 'Gio' },
+      { key: 'DOMANI', label: 'Domani', matchDay: 'Ven' },
+      { key: 'Lun', label: 'Lun', matchDay: 'Lun' },
+      { key: 'Mar', label: 'Mar', matchDay: 'Mar' },
+      { key: 'Mer', label: 'Mer', matchDay: 'Mer' },
+      { key: 'Gio', label: 'Gio', matchDay: 'Gio' },
+      { key: 'Ven', label: 'Ven', matchDay: 'Ven' }
+    ];
+
+    const QUICK_REPLIES = [
+      'Hai ancora 1 posto?',
+      'A che ora passi?',
+      'Va bene al punto Maps?',
+      'Perfetto, grazie!'
+    ];
+
+    const SIMULATED_REPLIES = [
+      'Ciao! Sì certo, ho ancora un posto libero. Ci vediamo al punto indicato?',
+      'Passo puntuale con 5 minuti di margine, ti avviso appena parto!',
+      'Comodissimo quel punto su Maps, perfetto!',
+      'Ottimo, allora a domani mattina!'
+    ];
+
+    // Centralized App State
+    const state = {
+      darkMode: false,
+      activeTab: 'home',         // 'chat' | 'home' | 'compagni' | 'profilo'
+      chatFilter: 'ALL',         // 'ALL' | 'UNREAD' | 'FAVORITES'
+      openChatColleagueId: null,
+
+      // Saved Google Maps Starting Point (Profile + persisted in localStorage)
+      savedMapsPoint: {
+        label: 'Modugno – Rotonda Via Roma',
+        url: 'https://www.google.com/maps/search/?api=1&query=Modugno+Via+Roma+Bari'
+      },
+
+      // Home Filters
+      selectedDay: 'ALL',
+      direction: 'andata',       // 'andata' | 'ritorno'
+      selectedDest: 'ALL',       // 'ALL' | 'Bari Centro' | 'Lungomare'
+      selectedZone: 'ALL',
+      onlyMyCompany: false,
+
+      // Crowdfunding
+      gplayAmount: 19,
+      appleAmount: 38,
+
+      // Add Trip Form State
+      formType: 'offer',
+      formDest: 'Bari Centro',
+      formDays: ['Lun', 'Mar', 'Gio'],
+      formSeats: 2,
+      formAttachMaps: false,
+
+      // Colleagues Directory
+      colleagues: {
+        c1: {
+          id: 'c1',
+          name: 'Chiara L.',
+          initials: 'CL',
+          avatarBg: 'bg-[#BE0F2D]',
+          company: 'Deloitte',
+          usualZone: 'Poggiofranco',
+          usualDest: 'Bari Centro',
+          usualDays: ['Lun', 'Mar', 'Gio'],
+          online: true,
+          lastSeen: 'Online ora',
+          favorite: true
+        },
+        c2: {
+          id: 'c2',
+          name: 'Luca M.',
+          initials: 'LM',
+          avatarBg: 'bg-[#2C3E50]',
+          company: 'Exprivia',
+          usualZone: 'Modugno',
+          usualDest: 'Lungomare',
+          usualDays: ['Lun', 'Mer', 'Ven'],
+          online: true,
+          lastSeen: 'Online ora',
+          favorite: true
+        },
+        c3: {
+          id: 'c3',
+          name: 'Davide P.',
+          initials: 'DP',
+          avatarBg: 'bg-[#9A3412]',
+          company: 'Deloitte',
+          usualZone: 'Carrassi',
+          usualDest: 'Bari Centro',
+          usualDays: ['Mar', 'Mer', 'Gio'],
+          online: false,
+          lastSeen: 'Ultimo accesso oggi 08:40',
+          favorite: false
+        },
+        c4: {
+          id: 'c4',
+          name: 'Elena V.',
+          initials: 'EV',
+          avatarBg: 'bg-[#5B21B6]',
+          company: 'Fincons',
+          usualZone: 'Molfetta',
+          usualDest: 'Lungomare',
+          usualDays: ['Lun', 'Mar', 'Mer', 'Gio'],
+          online: true,
+          lastSeen: 'Online ora',
+          favorite: false
+        },
+        c5: {
+          id: 'c5',
+          name: 'Alessio G.',
+          initials: 'AG',
+          avatarBg: 'bg-[#0F766E]',
+          company: 'Accenture',
+          usualZone: 'Triggiano',
+          usualDest: 'Lungomare',
+          usualDays: ['Mar', 'Gio', 'Ven'],
+          online: false,
+          lastSeen: 'Ultimo accesso ieri',
+          favorite: false
+        },
+        c6: {
+          id: 'c6',
+          name: 'Sara T.',
+          initials: 'ST',
+          avatarBg: 'bg-[#9D174D]',
+          company: 'Fincons',
+          usualZone: 'Bitonto',
+          usualDest: 'Bari Centro',
+          usualDays: ['Lun', 'Mer', 'Ven'],
+          online: true,
+          lastSeen: 'Online ora',
+          favorite: false
+        },
+        c7: {
+          id: 'c7',
+          name: 'Lorenzo B.',
+          initials: 'LB',
+          avatarBg: 'bg-[#3F6212]',
+          company: 'Deloitte',
+          usualZone: 'Japigia',
+          usualDest: 'Lungomare',
+          usualDays: ['Lun', 'Gio', 'Ven'],
+          online: false,
+          lastSeen: 'Ultimo accesso 20 min fa',
+          favorite: false
+        }
+      },
+
+      // Ride Feed (Exclusively Bari Centro & Lungomare)
+      rides: [
+        {
+          id: 'r1',
+          colleagueId: 'c1',
+          isMine: false,
+          active: true,
+          type: 'offer',
+          seats: 2,
+          zone: 'Poggiofranco',
+          dest: 'Bari Centro',
+          days: ['Lun', 'Mar', 'Gio'],
+          timeGo: '08:15',
+          timeBack: '18:00',
+          note: 'Passo da Viale Einaudi e Corso Cavour, flessibile di 10 min.',
+          mapsPoint: {
+            label: 'Poggiofranco – Bar delle Rose',
+            url: 'https://www.google.com/maps/search/?api=1&query=Poggiofranco+Bari+Viale+Einaudi'
+          }
+        },
+        {
+          id: 'r2',
+          colleagueId: 'c2',
+          isMine: false,
+          active: true,
+          type: 'offer',
+          seats: 3,
+          zone: 'Modugno',
+          dest: 'Lungomare',
+          days: ['Lun', 'Mer', 'Ven'],
+          timeGo: '08:05',
+          timeBack: '17:45',
+          note: 'Partenza Piazza Sedile, poi SS16 diretta verso il Lungomare.',
+          mapsPoint: {
+            label: 'Modugno – Piazza Sedile',
+            url: 'https://www.google.com/maps/search/?api=1&query=Piazza+Sedile+Modugno+Bari'
+          }
+        },
+        {
+          id: 'r3',
+          colleagueId: 'c3',
+          isMine: false,
+          active: true,
+          type: 'request',
+          seats: 0,
+          zone: 'Carrassi',
+          dest: 'Bari Centro',
+          days: ['Mar', 'Mer', 'Gio'],
+          timeGo: '08:35',
+          timeBack: '18:15',
+          note: 'Divido volentieri carburante e parcheggio!',
+          mapsPoint: null
+        },
+        {
+          id: 'r4',
+          colleagueId: 'c4',
+          isMine: false,
+          active: true,
+          type: 'offer',
+          seats: 1,
+          zone: 'Molfetta',
+          dest: 'Lungomare',
+          days: ['Lun', 'Mar', 'Mer', 'Gio'],
+          timeGo: '07:50',
+          timeBack: '17:30',
+          note: 'SS16 direzione sud, posso fermarmi allo svincolo San Paolo.',
+          mapsPoint: {
+            label: 'Molfetta – Uscita SS16 Sud',
+            url: 'https://www.google.com/maps/search/?api=1&query=Molfetta+SS16+Bari'
+          }
+        },
+        {
+          id: 'r5',
+          colleagueId: 'c5',
+          isMine: false,
+          active: true,
+          type: 'offer',
+          seats: 2,
+          zone: 'Triggiano',
+          dest: 'Lungomare',
+          days: ['Mar', 'Gio', 'Ven'],
+          timeGo: '08:20',
+          timeBack: '18:20',
+          note: 'Arrivo zona Lungomare Nazario Sauro / Pane e Pomodoro.',
+          mapsPoint: null
+        },
+        {
+          id: 'r6',
+          colleagueId: 'c6',
+          isMine: false,
+          active: true,
+          type: 'request',
+          seats: 0,
+          zone: 'Bitonto',
+          dest: 'Bari Centro',
+          days: ['Lun', 'Mer', 'Ven'],
+          timeGo: '08:00',
+          timeBack: '17:30',
+          note: 'Puntuale, va benissimo anche fermata su SP231.',
+          mapsPoint: null
+        },
+        {
+          id: 'r7',
+          colleagueId: 'c7',
+          isMine: false,
+          active: true,
+          type: 'offer',
+          seats: 2,
+          zone: 'Japigia',
+          dest: 'Lungomare',
+          days: ['Lun', 'Gio', 'Ven'],
+          timeGo: '08:25',
+          timeBack: '18:00',
+          note: 'Parto zona Ipercoop Japigia, musica tranquilla in auto.',
+          mapsPoint: {
+            label: 'Japigia – Rotonda Ipercoop',
+            url: 'https://www.google.com/maps/search/?api=1&query=Ipercoop+Japigia+Bari'
+          }
+        },
+        {
+          id: 'r_me1',
+          colleagueId: 'me',
+          isMine: true,
+          active: true,
+          type: 'offer',
+          seats: 2,
+          zone: 'Modugno',
+          dest: 'Bari Centro',
+          days: ['Mar', 'Gio'],
+          timeGo: '08:15',
+          timeBack: '18:05',
+          note: 'Parto da Via Roma, margine di 10 minuti.',
+          mapsPoint: {
+            label: 'Modugno – Rotonda Via Roma',
+            url: 'https://www.google.com/maps/search/?api=1&query=Modugno+Via+Roma+Bari'
+          }
+        }
+      ],
+
+      // In-App Conversations
+      conversations: {
+        c1: {
+          colleagueId: 'c1',
+          unread: 2,
+          routeTag: 'Poggiofranco → Bari Centro',
+          dayLabel: 'Lun, Mar, Gio',
+          timeLabel: '08:15',
+          seatsLeft: 2,
+          rideType: 'offer',
+          seatStatus: 'idle',
+          messages: [
+            { id: 'm1', sender: 'me', kind: 'text', text: 'Ciao Chiara! Domani vai verso Bari Centro?', time: '18:08', read: true },
+            { id: 'm2', sender: 'them', kind: 'text', text: 'Ciao Nicola! Sì confermato, parto alle 8:15 da Poggiofranco.', time: '18:12' },
+            { id: 'm3', sender: 'them', kind: 'text', text: 'Se vuoi mandami il tuo punto Maps col tasto pin qui sotto o richiedi il posto!', time: '18:13' }
+          ]
+        },
+        c2: {
+          colleagueId: 'c2',
+          unread: 0,
+          routeTag: 'Modugno → Lungomare',
+          dayLabel: 'Lun, Mer, Ven',
+          timeLabel: '08:05',
+          seatsLeft: 3,
+          rideType: 'offer',
+          seatStatus: 'confirmed',
+          messages: [
+            { id: 'm4', sender: 'them', kind: 'text', text: 'Ciao Nicola, venerdì vado sul Lungomare da Modugno!', time: '09:15' },
+            { id: 'm5', sender: 'me', kind: 'seat_request', route: 'Modugno → Lungomare', meta: 'Ven • 08:05', status: 'confirmed', time: '09:18', read: true },
+            { id: 'm6', sender: 'them', kind: 'text', text: 'Posto confermato! Ci vediamo alle 8:05.', time: '09:20' }
+          ]
+        },
+        c4: {
+          colleagueId: 'c4',
+          unread: 0,
+          routeTag: 'Molfetta → Lungomare',
+          dayLabel: 'Lun - Gio',
+          timeLabel: '07:50',
+          seatsLeft: 1,
+          rideType: 'offer',
+          seatStatus: 'idle',
+          messages: [
+            { id: 'm7', sender: 'me', kind: 'text', text: 'Ciao Elena, per giovedì hai ancora un posto libero verso il Lungomare?', time: 'Ieri', read: true },
+            { id: 'm8', sender: 'them', kind: 'text', text: 'Sì, mi è rimasto proprio l\'ultimo posto!', time: 'Ieri' }
+          ]
+        }
+      }
+    };
+
+    // ==================== PERSISTENCE: THEME & MAPS LINK ====================
+    function loadSavedPreferences() {
+      try {
+        const savedTheme = localStorage.getItem('salisu_theme');
+        if (savedTheme === 'dark') state.darkMode = true;
+        else if (savedTheme === 'light') state.darkMode = false;
+
+        const savedMaps = localStorage.getItem('salisu_maps_point');
+        if (savedMaps) {
+          const parsed = JSON.parse(savedMaps);
+          if (parsed && parsed.url) {
+            state.savedMapsPoint = parsed;
+          }
+        }
+      } catch (e) {
+        // Ignore storage restrictions in sandboxed iframes
+      }
+      applyTheme(false);
+    }
+
+    function toggleDarkMode() {
+      state.darkMode = !state.darkMode;
+      try {
+        localStorage.setItem('salisu_theme', state.darkMode ? 'dark' : 'light');
+      } catch (e) {}
+      applyTheme(true);
+    }
+
+    function applyTheme(showFeedback) {
+      document.documentElement.setAttribute('data-theme', state.darkMode ? 'dark' : 'light');
+      updateThemeToggleUI();
+      if (showFeedback) {
+        showToast(state.darkMode ? 'Modalità scura attivata 🌙' : 'Modalità chiara attivata ☀️');
+      }
+    }
+
+    function updateThemeToggleUI() {
+      const toggleBtn = document.getElementById('dark-mode-toggle');
+      const thumb = document.getElementById('dark-mode-thumb');
+      const iconBox = document.getElementById('theme-icon-box');
+      const desc = document.getElementById('theme-status-desc');
+      if (!toggleBtn) return;
+
+      toggleBtn.setAttribute('aria-checked', state.darkMode ? 'true' : 'false');
+
+      if (state.darkMode) {
+        toggleBtn.className = 'shrink-0 w-12 h-7 rounded-full p-1 flex items-center bg-crimson border border-crimson';
+        thumb.className = 'w-5 h-5 rounded-full bg-white shadow-md transition-transform translate-x-5';
+        desc.textContent = 'Tema espresso & sabbia attivo';
+        iconBox.innerHTML = `
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.1" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+          </svg>
+        `;
+      } else {
+        toggleBtn.className = 'shrink-0 w-12 h-7 rounded-full p-1 flex items-center bg-subtle border border-line';
+        thumb.className = 'w-5 h-5 rounded-full bg-white shadow-md transition-transform translate-x-0';
+        desc.textContent = 'Tema chiaro avorio attivo';
+        iconBox.innerHTML = `
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.1" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+          </svg>
+        `;
+      }
+    }
+
+    // ==================== GOOGLE MAPS POINT (PROFILO) ====================
+    function renderProfileMapsUI() {
+      const labelInput = document.getElementById('profile-maps-label');
+      const urlInput = document.getElementById('profile-maps-url');
+      const previewBox = document.getElementById('maps-saved-preview');
+      const previewLabel = document.getElementById('maps-preview-label');
+      const previewUrl = document.getElementById('maps-preview-url');
+      const openLink = document.getElementById('maps-open-link');
+
+      if (state.savedMapsPoint && state.savedMapsPoint.url) {
+        labelInput.value = state.savedMapsPoint.label || '';
+        urlInput.value = state.savedMapsPoint.url || '';
+        previewLabel.textContent = state.savedMapsPoint.label || 'Punto di partenza Google Maps';
+        previewUrl.textContent = state.savedMapsPoint.url;
+        openLink.href = state.savedMapsPoint.url;
+        previewBox.classList.remove('hidden');
+      } else {
+        previewBox.classList.add('hidden');
+      }
+    }
+
+    function fillBariMapsExample() {
+      document.getElementById('profile-maps-label').value = 'Poggiofranco – Bar delle Rose';
+      document.getElementById('profile-maps-url').value = 'https://www.google.com/maps/search/?api=1&query=Poggiofranco+Bari+Viale+Einaudi';
+      showToast('Esempio Bari compilato! Tocca "Salva posizione"');
+    }
+
+    function saveProfileMapsLocation() {
+      const label = document.getElementById('profile-maps-label').value.trim();
+      const url = document.getElementById('profile-maps-url').value.trim();
+
+      if (!url) {
+        showToast('Incolla prima un link Google Maps');
+        return;
+      }
+
+      const isValidUrl = /^https?:\/\/.+/i.test(url);
+      if (!isValidUrl) {
+        showToast('Inserisci un link valido (es. https://maps.app.goo.gl/...)');
+        return;
+      }
+
+      state.savedMapsPoint = {
+        label: label || 'Punto di partenza Google Maps',
+        url
+      };
+
+      try {
+        localStorage.setItem('salisu_maps_point', JSON.stringify(state.savedMapsPoint));
+      } catch (e) {}
+
+      renderProfileMapsUI();
+      showToast('Posizione Google Maps salvata! 📍');
+    }
+
+    // ==================== INITIALIZATION ====================
+    function init() {
+      loadSavedPreferences();
+      renderDayPills();
+      renderDirectionToggle();
+      renderDestPills();
+      renderCompanyToggle();
+      renderHomeFeed();
+      renderChatFilterPills();
+      renderChatArchive();
+      renderCompagni();
+      renderProfileDestSelector();
+      renderProfileMapsUI();
+      renderMyTrips();
+      renderFormDest();
+      renderFormDays();
+      renderFormSeats();
+      updateUnreadBadge();
+      updateCoffeeUI();
+    }
+
+    // ==================== NAVIGATION ====================
+    function switchTab(tab) {
+      state.activeTab = tab;
+      ['chat', 'home', 'compagni', 'profilo'].forEach(v => {
+        const sec = document.getElementById(`view-${v}`);
+        const nav = document.getElementById(`nav-${v}`);
+        if (v === tab) {
+          sec.classList.remove('hidden');
+          nav.classList.remove('text-muted', 'hover:text-ink');
+          nav.classList.add('text-accentWarm', 'is-active');
+        } else {
+          sec.classList.add('hidden');
+          nav.classList.remove('text-accentWarm', 'is-active');
+          nav.classList.add('text-muted', 'hover:text-ink');
+        }
+      });
+
+      if (tab === 'chat') renderChatArchive();
+      if (tab === 'home') renderHomeFeed();
+      if (tab === 'compagni') renderCompagni();
+      if (tab === 'profilo') {
+        updateThemeToggleUI();
+        renderProfileDestSelector();
+        renderProfileMapsUI();
+        renderMyTrips();
+      }
+      document.getElementById('main-scroll').scrollTop = 0;
+    }
+
+    // ==================== HOME FILTERS ====================
+    function renderDayPills() {
+      document.getElementById('day-pills').innerHTML = DAY_FILTER_OPTIONS.map(item => {
+        const active = state.selectedDay === item.key;
+        return `
+          <button onclick="setDayFilter('${item.key}')"
+            class="shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold active:scale-95 ${
+              active
+                ? 'bg-crimson text-white shadow-sm'
+                : 'bg-card text-muted border border-line hover:border-accentWarmBorder hover:text-ink'
+            }">
+            ${item.label}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function setDayFilter(day) {
+      state.selectedDay = day;
+      renderDayPills();
+      renderHomeFeed();
+    }
+
+    function renderDirectionToggle() {
+      const btnGo = document.getElementById('btn-dir-andata');
+      const btnBack = document.getElementById('btn-dir-ritorno');
+      const activeCls = 'py-1.5 px-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 bg-crimson text-white shadow-sm';
+      const inactiveCls = 'py-1.5 px-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 text-muted hover:text-ink';
+      btnGo.className = state.direction === 'andata' ? activeCls : inactiveCls;
+      btnBack.className = state.direction === 'ritorno' ? activeCls : inactiveCls;
+    }
+
+    function setDirection(dir) {
+      state.direction = dir;
+      renderDirectionToggle();
+      renderHomeFeed();
+    }
+
+    function renderDestPills() {
+      const opts = [
+        { key: 'ALL', label: 'Tutte' },
+        { key: 'Bari Centro', label: 'Bari Centro' },
+        { key: 'Lungomare', label: 'Lungomare' }
+      ];
+      document.getElementById('dest-pills').innerHTML = opts.map(opt => {
+        const active = state.selectedDest === opt.key;
+        return `
+          <button onclick="setDestFilter('${opt.key}')"
+            class="py-1.5 px-2 rounded-xl text-xs font-bold border active:scale-95 truncate ${
+              active
+                ? 'bg-accentWarmSoft text-accentWarm border-accentWarmBorder'
+                : 'bg-card text-muted border-line hover:text-ink'
+            }">
+            ${opt.label}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function setDestFilter(dest) {
+      state.selectedDest = dest;
+      renderDestPills();
+      renderHomeFeed();
+    }
+
+    function setZoneFilter(zone) {
+      state.selectedZone = zone;
+      renderHomeFeed();
+    }
+
+    function renderCompanyToggle() {
+      const btn = document.getElementById('btn-company-toggle');
+      const track = document.getElementById('company-switch-track');
+      const thumb = document.getElementById('company-switch-thumb');
+
+      if (state.onlyMyCompany) {
+        btn.className = 'shrink-0 flex items-center gap-2 px-2.5 py-2 rounded-xl border text-xs font-bold active:scale-95 bg-accentWarmSoft border-accentWarmBorder text-accentWarm shadow-card';
+        track.className = 'w-7 h-4 rounded-full p-0.5 flex items-center bg-crimson';
+        thumb.className = 'w-3 h-3 rounded-full bg-white shadow transition-transform translate-x-3';
+      } else {
+        btn.className = 'shrink-0 flex items-center gap-2 px-2.5 py-2 rounded-xl border text-xs font-semibold active:scale-95 bg-card border-line text-muted shadow-card';
+        track.className = 'w-7 h-4 rounded-full p-0.5 flex items-center bg-subtle border border-line';
+        thumb.className = 'w-3 h-3 rounded-full bg-white shadow transition-transform translate-x-0';
+      }
+    }
+
+    function toggleCompanyFilter() {
+      state.onlyMyCompany = !state.onlyMyCompany;
+      renderCompanyToggle();
+      renderHomeFeed();
+    }
+
+    // ==================== HOME FEED RENDERER ====================
+    function renderHomeFeed() {
+      const container = document.getElementById('ride-feed');
+      const countEl = document.getElementById('results-count');
+      const selectedDayObj = DAY_FILTER_OPTIONS.find(d => d.key === state.selectedDay);
+      const matchDay = selectedDayObj ? selectedDayObj.matchDay : null;
+
+      const filtered = state.rides.filter(r => {
+        if (!r.active) return false;
+        const person = r.isMine ? CURRENT_USER : state.colleagues[r.colleagueId];
+        if (matchDay && !r.days.includes(matchDay)) return false;
+        if (state.selectedDest !== 'ALL' && r.dest !== state.selectedDest) return false;
+        if (state.selectedZone !== 'ALL' && r.zone !== state.selectedZone) return false;
+        if (state.onlyMyCompany && person.company !== CURRENT_USER.company) return false;
+        return true;
+      });
+
+      countEl.textContent = filtered.length === 1 ? '1 tragitto' : `${filtered.length} tragitti`;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="py-12 px-6 text-center rounded-2xl bg-card border border-dashed border-line shadow-card">
+            <p class="text-sm font-extrabold text-ink">Nessun passaggio trovato</p>
+            <p class="text-xs text-muted mt-1">Prova a cambiare filtri oppure pubblica tu il primo tragitto!</p>
+            <button onclick="openAddTripModal()" class="mt-4 px-4 py-2 rounded-xl bg-crimson text-white text-xs font-bold shadow-crimson active:scale-95">
+              + Inserisci tragitto
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(ride => {
+        const person = ride.isMine ? CURRENT_USER : state.colleagues[ride.colleagueId];
+        const isSameCompany = person.company === CURRENT_USER.company;
+        const isOffer = ride.type === 'offer';
+        const isFav = !ride.isMine && person.favorite;
+        const displayTime = state.direction === 'andata' ? ride.timeGo : ride.timeBack;
+        const fromPlace = state.direction === 'andata' ? ride.zone : ride.dest;
+        const toPlace = state.direction === 'andata' ? ride.dest : ride.zone;
+        const routeStr = `${fromPlace} → ${toPlace}`;
+
+        const daysBadges = WEEKDAYS.map((day, idx) => {
+          const hasDay = ride.days.includes(day);
+          const isSelected = matchDay === day;
+          return `
+            <span class="w-5 h-5 rounded-md text-[10px] font-bold flex items-center justify-center ${
+              hasDay
+                ? (isSelected ? 'bg-crimson text-white' : 'bg-subtle text-ink border border-line')
+                : 'text-muted/35'
+            }">${WEEKDAY_INITIALS[idx]}</span>
+          `;
+        }).join('');
+
+        // TWO IDENTICAL SYMMETRIC RECTANGLES: 48x44px (w-12 h-11 rounded-xl)
+        const seatsBoxHtml = isOffer ? `
+          <div class="w-12 h-11 rounded-xl bg-crimsonSoft border border-crimsonBorder flex flex-col items-center justify-center shrink-0 leading-none">
+            <div class="flex items-center gap-0.5 text-crimson">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l1.5-4.5A2 2 0 018.4 7h7.2a2 2 0 011.9 1.5L19 13m-14 0h14m-14 0v4a1 1 0 001 1h1a1 1 0 001-1v-1h8v1a1 1 0 001 1h1a1 1 0 001-1v-4"/>
+              </svg>
+              <span class="text-xs font-extrabold">${ride.seats}</span>
+            </div>
+            <span class="text-[9px] font-bold text-crimson mt-0.5">${ride.seats === 1 ? 'posto' : 'posti'}</span>
+          </div>
+        ` : `
+          <div class="w-12 h-11 rounded-xl bg-subtle border border-line flex flex-col items-center justify-center shrink-0 leading-none">
+            <svg class="w-3.5 h-3.5 text-accentWarm" fill="none" stroke="currentColor" stroke-width="2.1" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11"/>
+            </svg>
+            <span class="text-[9px] font-bold text-muted mt-0.5">Cerco</span>
+          </div>
+        `;
+
+        const heartBoxHtml = !ride.isMine ? `
+          <button onclick="toggleFavorite('${person.id}', true)" aria-label="Salva nei Compagni"
+            class="w-12 h-11 rounded-xl border flex items-center justify-center shrink-0 active:scale-90 ${
+              isFav
+                ? 'bg-crimsonSoft border-crimsonBorder text-crimson'
+                : 'bg-subtle border-line text-muted hover:border-crimsonBorder hover:text-crimson'
+            }">
+            <svg class="w-5 h-5 heart-svg" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2.1" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+            </svg>
+          </button>
+        ` : '';
+
+        return `
+          <article class="p-4 rounded-2xl bg-card border border-line shadow-card space-y-3">
+            <!-- Top Row: Colleague + Symmetric [Seats] [Heart] -->
+            <div class="flex items-start justify-between gap-2">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <div class="relative shrink-0">
+                  <div class="w-11 h-11 rounded-xl ${ride.isMine ? 'bg-crimson' : person.avatarBg} flex items-center justify-center text-white font-extrabold text-xs shadow-sm">
+                    ${person.initials}
+                  </div>
+                  ${!ride.isMine && person.online ? '<span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emeraldOk ring-2 ring-card"></span>' : ''}
+                </div>
+                <div class="min-w-0">
+                  <div class="flex items-center gap-1.5">
+                    <h3 class="text-sm font-extrabold text-ink truncate">${person.name}</h3>
+                    ${ride.isMine ? '<span class="px-1.5 py-0.5 rounded bg-accentWarmSoft text-accentWarm text-[9px] font-bold uppercase">Tu</span>' : ''}
+                  </div>
+                  <div class="flex items-center gap-1 mt-0.5 flex-wrap">
+                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-bold ${
+                      isSameCompany
+                        ? 'bg-accentWarmSoft text-accentWarm border border-accentWarmBorder'
+                        : 'bg-subtle text-muted border border-line'
+                    }">
+                      <svg class="w-2.5 h-2.5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/>
+                      </svg>
+                      ${person.company}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Identical 48x44px Symmetric Boxes -->
+              <div class="flex items-center gap-1.5 shrink-0">
+                ${seatsBoxHtml}
+                ${heartBoxHtml}
+              </div>
+            </div>
+
+            <!-- Route & Time Box -->
+            <div class="p-3 rounded-xl bg-subtle/90 border border-line flex items-center justify-between gap-3">
+              <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                <div class="flex flex-col items-center gap-0.5 shrink-0">
+                  <span class="w-2 h-2 rounded-full bg-crimson"></span>
+                  <span class="w-0.5 h-3.5 bg-line"></span>
+                  <span class="w-2 h-2 rounded-sm bg-accentWarm"></span>
+                </div>
+                <div class="min-w-0 flex-1 space-y-0.5">
+                  <div class="text-xs font-bold text-ink truncate">${fromPlace}</div>
+                  <div class="text-xs font-medium text-muted truncate">${toPlace}</div>
+                </div>
+              </div>
+              <div class="text-right shrink-0 pl-3 border-l border-line">
+                <div class="text-lg font-extrabold tracking-tight text-ink leading-none">${displayTime}</div>
+                <div class="text-[10px] font-bold text-muted mt-1 uppercase">
+                  ${state.direction === 'andata' ? 'Andata' : 'Ritorno'}
+                </div>
+              </div>
+            </div>
+
+            <!-- Days + Maps Badge + Note -->
+            <div class="space-y-2">
+              <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-1">${daysBadges}</div>
+                <span class="text-[10px] text-muted font-semibold">
+                  ${state.direction === 'andata' ? `Rit. ${ride.timeBack}` : `And. ${ride.timeGo}`}
+                </span>
+              </div>
+
+              ${ride.mapsPoint ? `
+                <a href="${escapeAttr(ride.mapsPoint.url)}" target="_blank" rel="noopener noreferrer"
+                  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accentWarmSoft border border-accentWarmBorder text-[11px] font-bold text-accentWarm hover:opacity-90 max-w-full">
+                  <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  </svg>
+                  <span class="truncate">Punto Maps: ${escapeHtml(ride.mapsPoint.label)}</span>
+                </a>
+              ` : ''}
+
+              ${ride.note ? `<p class="text-xs text-muted leading-relaxed">${escapeHtml(ride.note)}</p>` : ''}
+            </div>
+
+            <!-- Primary CTA -->
+            ${ride.isMine ? `
+              <button onclick="switchTab('profilo')"
+                class="w-full py-2.5 px-4 rounded-xl bg-subtle hover:opacity-90 border border-line text-ink font-bold text-xs flex items-center justify-center gap-2 active:scale-[0.98]">
+                Gestisci il tuo tragitto nel Profilo
+              </button>
+            ` : `
+              <button onclick="openChat('${person.id}', '${escapeAttr(routeStr)}', '${ride.days.join(', ')}', '${displayTime}', ${ride.seats}, '${ride.type}')"
+                class="w-full py-2.5 px-4 rounded-xl bg-crimson hover:bg-crimsonHover text-white font-bold text-xs flex items-center justify-center gap-2 shadow-crimson active:scale-[0.98]">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                </svg>
+                Avvia chat
+              </button>
+            `}
+          </article>
+        `;
+      }).join('');
+    }
+
+    // ==================== FAVORITES (HEART & COMPAGNI) ====================
+    function toggleFavorite(colleagueId, triggerPop) {
+      const col = state.colleagues[colleagueId];
+      if (!col) return;
+      col.favorite = !col.favorite;
+
+      renderHomeFeed();
+      renderCompagni();
+      renderChatArchive();
+      if (state.openChatColleagueId === colleagueId) {
+        updateChatHeaderHeart(true);
+      }
+
+      if (col.favorite && triggerPop) {
+        requestAnimationFrame(() => {
+          document.querySelectorAll('.heart-svg').forEach(el => {
+            if (el.getAttribute('fill') === 'currentColor') {
+              el.classList.add('animate-heart-pop');
+            }
+          });
+        });
+      }
+
+      showToast(col.favorite
+        ? `${col.name} aggiunto ai Compagni ♥`
+        : `${col.name} rimosso dai Compagni`
+      );
+    }
+
+    function renderCompagni() {
+      const container = document.getElementById('compagni-list');
+      const countEl = document.getElementById('favorites-count');
+      const favs = Object.values(state.colleagues).filter(c => c.favorite);
+
+      countEl.textContent = `${favs.length} ${favs.length === 1 ? 'salvato' : 'salvati'}`;
+
+      if (favs.length === 0) {
+        container.innerHTML = `
+          <div class="py-12 px-6 text-center rounded-2xl bg-card border border-dashed border-line shadow-card space-y-3">
+            <div class="w-12 h-12 mx-auto rounded-2xl bg-crimsonSoft border border-crimsonBorder text-crimson flex items-center justify-center">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-sm font-extrabold text-ink">Nessun compagno salvato</h3>
+              <p class="text-xs text-muted mt-1">Tocca il cuore ♥ sui passaggi nella Home o in Chat per salvare qui i tuoi colleghi di fiducia.</p>
+            </div>
+            <button onclick="switchTab('home')"
+              class="px-4 py-2 rounded-xl bg-crimson text-white font-bold text-xs shadow-crimson active:scale-95">
+              Esplora la Home
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = favs.map(col => {
+        const ride = state.rides.find(r => r.colleagueId === col.id && r.active);
+        const routeStr = ride ? `${ride.zone} → ${ride.dest}` : `${col.usualZone} → ${col.usualDest}`;
+        const timeStr = ride ? ride.timeGo : '08:15';
+        const seats = ride ? ride.seats : 2;
+        const type = ride ? ride.type : 'offer';
+
+        return `
+          <div class="p-4 rounded-2xl bg-card border border-line shadow-card space-y-3">
+            <div class="flex items-start justify-between gap-2">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="relative shrink-0">
+                  <div class="w-11 h-11 rounded-xl ${col.avatarBg} flex items-center justify-center text-white font-extrabold text-xs shadow-sm">
+                    ${col.initials}
+                  </div>
+                  ${col.online ? '<span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emeraldOk ring-2 ring-card"></span>' : ''}
+                </div>
+                <div class="min-w-0">
+                  <div class="flex items-center gap-1.5">
+                    <h3 class="text-sm font-extrabold text-ink truncate">${col.name}</h3>
+                    <span class="px-1.5 py-0.5 rounded-md bg-accentWarmSoft border border-accentWarmBorder text-[10px] font-bold text-accentWarm shrink-0">
+                      ${col.company}
+                    </span>
+                  </div>
+                  <p class="text-xs font-semibold text-ink mt-1 truncate">${routeStr}</p>
+                  <p class="text-[11px] text-muted font-medium">${col.usualDays.join(', ')} • ${timeStr}</p>
+                </div>
+              </div>
+
+              <button onclick="toggleFavorite('${col.id}', false)" aria-label="Rimuovi dai Compagni" title="Rimuovi"
+                class="w-12 h-11 rounded-xl bg-crimsonSoft border border-crimsonBorder text-crimson flex items-center justify-center active:scale-90 shrink-0">
+                <svg class="w-5 h-5" fill="currentColor" stroke="currentColor" stroke-width="2.1" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                </svg>
+              </button>
+            </div>
+
+            <button onclick="openChat('${col.id}', '${escapeAttr(routeStr)}', '${col.usualDays.join(', ')}', '${timeStr}', ${seats}, '${type}')"
+              class="w-full py-2.5 px-4 rounded-xl bg-crimson hover:bg-crimsonHover text-white font-bold text-xs flex items-center justify-center gap-2 shadow-crimson active:scale-[0.98]">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+              </svg>
+              Apri chat
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ==================== CHAT ARCHIVE ====================
+    function renderChatFilterPills() {
+      const pills = [
+        { key: 'ALL', label: 'Tutte' },
+        { key: 'UNREAD', label: 'Non lette' },
+        { key: 'FAVORITES', label: 'Preferiti ♥' }
+      ];
+      document.getElementById('chat-filter-pills').innerHTML = pills.map(p => {
+        const active = state.chatFilter === p.key;
+        return `
+          <button onclick="setChatFilter('${p.key}')"
+            class="px-3.5 py-1.5 rounded-full text-xs font-bold active:scale-95 ${
+              active
+                ? 'bg-crimson text-white shadow-sm'
+                : 'bg-card text-muted border border-line hover:border-accentWarmBorder hover:text-ink'
+            }">
+            ${p.label}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function setChatFilter(filter) {
+      state.chatFilter = filter;
+      renderChatFilterPills();
+      renderChatArchive();
+    }
+
+    function renderChatArchive() {
+      const container = document.getElementById('chat-archive-list');
+      const countEl = document.getElementById('chat-archive-count');
+      const query = (document.getElementById('chat-search-input')?.value || '').trim().toLowerCase();
+
+      const convList = Object.values(state.conversations).filter(conv => {
+        const col = state.colleagues[conv.colleagueId];
+        if (!col || conv.messages.length === 0) return false;
+        if (state.chatFilter === 'UNREAD' && !(conv.unread > 0)) return false;
+        if (state.chatFilter === 'FAVORITES' && !col.favorite) return false;
+        if (query) {
+          const hay = `${col.name} ${col.company} ${col.usualZone} ${conv.routeTag}`.toLowerCase();
+          if (!hay.includes(query)) return false;
+        }
+        return true;
+      });
+
+      countEl.textContent = `${convList.length} chat`;
+
+      if (convList.length === 0) {
+        container.innerHTML = `
+          <div class="py-12 px-6 text-center rounded-2xl bg-card border border-dashed border-line shadow-card">
+            <p class="text-sm font-extrabold text-ink">Nessuna conversazione</p>
+            <p class="text-xs text-muted mt-1">Cambia filtro oppure avvia una nuova chat dalla Home.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = convList.map(conv => {
+        const col = state.colleagues[conv.colleagueId];
+        const lastMsg = conv.messages[conv.messages.length - 1];
+        const isUnread = conv.unread > 0;
+
+        let previewText = '';
+        if (lastMsg.kind === 'seat_request') {
+          previewText = lastMsg.status === 'confirmed' ? '✓ Posto confermato' : '🚗 Richiesta posto inviata';
+        } else if (lastMsg.kind === 'maps_point') {
+          previewText = `📍 Punto Maps: ${lastMsg.label}`;
+        } else {
+          previewText = lastMsg.text;
+        }
+
+        const doubleCheck = lastMsg.sender === 'me' ? `
+          <svg class="w-3.5 h-3.5 text-accentWarm shrink-0 inline mr-0.5" fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2 13l4 4L15 7m-4 10l4 4L22 10"/>
+          </svg>
+        ` : '';
+
+        return `
+          <button onclick="openChat('${col.id}', '${escapeAttr(conv.routeTag)}', '${escapeAttr(conv.dayLabel)}', '${escapeAttr(conv.timeLabel)}', ${conv.seatsLeft}, '${conv.rideType}')"
+            class="w-full text-left p-3.5 rounded-2xl bg-card hover:bg-subtle/60 border ${isUnread ? 'border-accentWarmBorder shadow-soft' : 'border-line shadow-card'} flex items-center gap-3 active:scale-[0.99]">
+            <div class="relative shrink-0">
+              <div class="w-12 h-12 rounded-full ${col.avatarBg} flex items-center justify-center text-white font-extrabold text-xs shadow-sm">
+                ${col.initials}
+              </div>
+              ${col.online ? '<span class="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-emeraldOk ring-2 ring-card"></span>' : ''}
+            </div>
+
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-1.5 min-w-0">
+                  <span class="text-sm font-extrabold text-ink truncate">${col.name}</span>
+                  <span class="px-1.5 py-0.5 rounded bg-subtle border border-line text-[9px] font-bold text-muted shrink-0">${col.company}</span>
+                </div>
+                <span class="text-[11px] ${isUnread ? 'text-accentWarm font-extrabold' : 'text-muted font-medium'} shrink-0">${lastMsg.time}</span>
+              </div>
+
+              <div class="mt-0.5">
+                <span class="inline-block px-1.5 py-0.2 rounded bg-accentWarmSoft text-accentWarm text-[10px] font-bold truncate max-w-[210px]">
+                  ${escapeHtml(conv.routeTag)}
+                </span>
+              </div>
+
+              <div class="flex items-center justify-between gap-2 mt-1">
+                <p class="text-xs ${isUnread ? 'text-ink font-bold' : 'text-muted'} truncate flex items-center">
+                  ${doubleCheck}<span>${escapeHtml(previewText)}</span>
+                </p>
+                ${isUnread ? `
+                  <span class="shrink-0 min-w-[20px] h-5 px-1.5 rounded-full bg-crimson text-white text-[10px] font-extrabold flex items-center justify-center">
+                    ${conv.unread}
+                  </span>
+                ` : ''}
+              </div>
+            </div>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function updateUnreadBadge() {
+      const total = Object.values(state.conversations).reduce((sum, c) => sum + (c.unread || 0), 0);
+      const badge = document.getElementById('nav-chat-badge');
+      if (total > 0) {
+        badge.textContent = total;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+
+    // ==================== NATIVE CHAT OVERLAY ====================
+    function openChat(colleagueId, routeTag, dayLabel, timeLabel, seatsLeft, rideType) {
+      const col = state.colleagues[colleagueId];
+      if (!col) return;
+
+      state.openChatColleagueId = colleagueId;
+
+      if (!state.conversations[colleagueId]) {
+        state.conversations[colleagueId] = {
+          colleagueId,
+          unread: 0,
+          routeTag: routeTag || `${col.usualZone} → ${col.usualDest}`,
+          dayLabel: dayLabel || col.usualDays.join(', '),
+          timeLabel: timeLabel || '08:15',
+          seatsLeft: typeof seatsLeft === 'number' ? seatsLeft : 2,
+          rideType: rideType || 'offer',
+          seatStatus: 'idle',
+          messages: []
+        };
+      } else {
+        state.conversations[colleagueId].unread = 0;
+        if (routeTag) state.conversations[colleagueId].routeTag = routeTag;
+        if (timeLabel) state.conversations[colleagueId].timeLabel = timeLabel;
+      }
+
+      const avatarEl = document.getElementById('chat-header-avatar');
+      avatarEl.className = `w-10 h-10 rounded-full ${col.avatarBg} flex items-center justify-center text-white font-extrabold text-xs shadow-sm`;
+      avatarEl.textContent = col.initials;
+
+      const dotEl = document.getElementById('chat-header-online-dot');
+      const statusEl = document.getElementById('chat-header-status');
+      if (col.online) {
+        dotEl.classList.remove('hidden');
+        statusEl.textContent = 'Online ora';
+        statusEl.className = 'text-[11px] font-bold text-emeraldText truncate mt-0.5';
+      } else {
+        dotEl.classList.add('hidden');
+        statusEl.textContent = col.lastSeen;
+        statusEl.className = 'text-[11px] font-medium text-muted truncate mt-0.5';
+      }
+
+      document.getElementById('chat-header-name').textContent = col.name;
+      document.getElementById('chat-header-company').textContent = col.company;
+
+      updateChatHeaderHeart(false);
+      renderChatContextBanner();
+      renderChatQuickReplies();
+      renderChatMessages(false);
+      updateUnreadBadge();
+      renderChatArchive();
+
+      document.getElementById('overlay-chat').classList.remove('hidden');
+      scrollToBottomChat();
+    }
+
+    function closeChatOverlay() {
+      document.getElementById('overlay-chat').classList.add('hidden');
+      state.openChatColleagueId = null;
+      renderChatArchive();
+      updateUnreadBadge();
+    }
+
+    function updateChatHeaderHeart(animate) {
+      const col = state.colleagues[state.openChatColleagueId];
+      if (!col) return;
+      const btn = document.getElementById('chat-header-heart');
+      btn.className = `w-10 h-10 rounded-xl border flex items-center justify-center active:scale-90 shrink-0 ${
+        col.favorite
+          ? 'bg-crimsonSoft border-crimsonBorder text-crimson'
+          : 'bg-subtle border-line text-muted hover:border-crimsonBorder hover:text-crimson'
+      }`;
+      btn.innerHTML = `
+        <svg class="w-5 h-5 ${animate && col.favorite ? 'animate-heart-pop' : ''}" fill="${col.favorite ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2.1" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+        </svg>
+      `;
+    }
+
+    function toggleFavoriteFromChat() {
+      if (state.openChatColleagueId) toggleFavorite(state.openChatColleagueId, false);
+    }
+
+    function renderChatContextBanner() {
+      const conv = state.conversations[state.openChatColleagueId];
+      if (!conv) return;
+      document.getElementById('chat-ctx-route').textContent = conv.routeTag;
+      document.getElementById('chat-ctx-meta').textContent =
+        `${conv.dayLabel} • ${conv.timeLabel} • ${conv.rideType === 'offer' ? `${conv.seatsLeft} ${conv.seatsLeft === 1 ? 'posto libero' : 'posti liberi'}` : 'Richiesta passaggio'}`;
+
+      const btn = document.getElementById('chat-ctx-action');
+      if (conv.seatStatus === 'confirmed') {
+        btn.disabled = true;
+        btn.className = 'shrink-0 px-3 py-1.5 rounded-xl text-[11px] font-extrabold bg-emeraldSoft text-emeraldText border border-emeraldOk/30';
+        btn.textContent = '✓ Confermato';
+      } else if (conv.seatStatus === 'requested') {
+        btn.disabled = true;
+        btn.className = 'shrink-0 px-3 py-1.5 rounded-xl text-[11px] font-bold bg-accentWarmSoft text-accentWarm border border-accentWarmBorder';
+        btn.textContent = 'Posto richiesto';
+      } else {
+        btn.disabled = false;
+        btn.className = 'shrink-0 px-3 py-1.5 rounded-xl text-[11px] font-bold bg-crimson hover:bg-crimsonHover text-white shadow-sm active:scale-95';
+        btn.textContent = conv.rideType === 'offer' ? 'Richiedi posto' : 'Offri posto';
+      }
+    }
+
+    function renderChatQuickReplies() {
+      document.getElementById('chat-quick-replies').innerHTML = QUICK_REPLIES.map(q => `
+        <button type="button" onclick="sendChatMessage('${escapeAttr(q)}')"
+          class="shrink-0 px-3 py-1.5 rounded-full bg-card hover:bg-accentWarmSoft border border-line hover:border-accentWarmBorder text-[11px] font-semibold text-ink shadow-card active:scale-95">
+          ${escapeHtml(q)}
+        </button>
+      `).join('');
+    }
+
+    function renderChatMessages(showTyping) {
+      const conv = state.conversations[state.openChatColleagueId];
+      const area = document.getElementById('chat-messages-area');
+      if (!conv) return;
+
+      let html = `
+        <div class="flex justify-center my-1">
+          <span class="px-3 py-1 rounded-full bg-card/90 border border-line text-[10px] font-bold uppercase tracking-wider text-muted shadow-card">
+            Oggi
+          </span>
+        </div>
+      `;
+
+      if (conv.messages.length === 0) {
+        html += `
+          <div class="py-8 px-5 text-center">
+            <div class="w-12 h-12 mx-auto rounded-2xl bg-card border border-line text-accentWarm flex items-center justify-center shadow-card mb-2.5">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+              </svg>
+            </div>
+            <p class="text-xs font-extrabold text-ink">Inizia a organizzare il passaggio</p>
+            <p class="text-[11px] text-muted mt-1">Usa una risposta rapida, invia il tuo punto Google Maps 📍 o tocca "Richiedi posto" in alto.</p>
+          </div>
+        `;
+      } else {
+        html += conv.messages.map(m => {
+          const isMe = m.sender === 'me';
+
+          // Seat Request Interactive Card
+          if (m.kind === 'seat_request') {
+            const isConfirmed = m.status === 'confirmed';
+            return `
+              <div class="flex justify-end">
+                <div class="w-[82%] p-3 rounded-2xl rounded-br-sm bg-card border-2 ${isConfirmed ? 'border-emeraldOk/50' : 'border-accentWarmBorder'} shadow-soft space-y-2">
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="text-[10px] font-extrabold uppercase tracking-wider ${isConfirmed ? 'text-emeraldText' : 'text-accentWarm'}">
+                      ${isConfirmed ? '✓ Passaggio Confermato' : '🚗 Richiesta di passaggio'}
+                    </span>
+                    <span class="text-[10px] text-muted font-medium">${m.time}</span>
+                  </div>
+                  <div class="p-2.5 rounded-xl bg-subtle border border-line">
+                    <div class="text-xs font-extrabold text-ink">${escapeHtml(m.route)}</div>
+                    <div class="text-[11px] text-muted font-medium mt-0.5">${escapeHtml(m.meta)}</div>
+                  </div>
+                  <div class="flex items-center justify-between text-[11px]">
+                    <span class="px-2 py-0.5 rounded-full font-bold ${isConfirmed ? 'bg-emeraldSoft text-emeraldText' : 'bg-accentWarmSoft text-accentWarm'}">
+                      ${isConfirmed ? 'Posto riservato per te' : 'In attesa di conferma...'}
+                    </span>
+                    <svg class="w-3.5 h-3.5 text-accentWarm" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M2 13l4 4L15 7m-4 10l4 4L22 10"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+
+          // Clickable Google Maps Location Card
+          if (m.kind === 'maps_point') {
+            return `
+              <div class="flex justify-end">
+                <a href="${escapeAttr(m.url)}" target="_blank" rel="noopener noreferrer"
+                  class="block w-[84%] p-3 rounded-2xl rounded-br-sm bg-crimson text-white shadow-crimson space-y-2 hover:opacity-95 active:scale-[0.99] transition">
+                  <div class="flex items-start gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+                      <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                      </svg>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                      <div class="text-[10px] font-bold uppercase tracking-wider text-white/80">Punto di partenza • Maps</div>
+                      <div class="text-xs font-extrabold leading-snug mt-0.5">${escapeHtml(m.label)}</div>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between pt-1.5 border-t border-white/20 text-[10px] text-white/90">
+                    <span class="font-bold flex items-center gap-1">
+                      Apri su Google Maps
+                      <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                      </svg>
+                    </span>
+                    <span class="flex items-center gap-1">
+                      ${m.time}
+                      <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2 13l4 4L15 7m-4 10l4 4L22 10"/>
+                      </svg>
+                    </span>
+                  </div>
+                </a>
+              </div>
+            `;
+          }
+
+          // Standard Text Bubble
+          return `
+            <div class="flex ${isMe ? 'justify-end' : 'justify-start'}">
+              <div class="max-w-[80%] px-3.5 py-2.5 ${
+                isMe
+                  ? 'bg-crimson text-white rounded-2xl rounded-br-sm shadow-sm'
+                  : 'bg-card text-ink border border-line rounded-2xl rounded-bl-sm shadow-card'
+              }">
+                <p class="text-[13px] leading-relaxed ${isMe ? 'font-medium' : 'font-normal'}">${escapeHtml(m.text)}</p>
+                <div class="mt-1 flex items-center justify-end gap-1 text-[10px] ${isMe ? 'text-white/75' : 'text-muted'}">
+                  <span>${m.time}</span>
+                  ${isMe ? `
+                    <svg class="w-3.5 h-3.5 text-white/90" fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M2 13l4 4L15 7m-4 10l4 4L22 10"/>
+                    </svg>
+                  ` : ''}
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      if (showTyping) {
+        html += `
+          <div class="flex justify-start">
+            <div class="px-3.5 py-2.5 rounded-2xl rounded-bl-sm bg-card border border-line shadow-card flex items-center gap-2">
+              <span class="text-[11px] font-medium text-muted">sta scrivendo</span>
+              <div class="flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-accentWarm typing-dot"></span>
+                <span class="w-1.5 h-1.5 rounded-full bg-accentWarm typing-dot"></span>
+                <span class="w-1.5 h-1.5 rounded-full bg-accentWarm typing-dot"></span>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      area.innerHTML = html;
+      scrollToBottomChat();
+    }
+
+    function scrollToBottomChat() {
+      requestAnimationFrame(() => {
+        const area = document.getElementById('chat-messages-area');
+        if (area) area.scrollTop = area.scrollHeight;
+      });
+    }
+
+    function handleSeatRequest() {
+      const targetId = state.openChatColleagueId;
+      if (!targetId) return;
+      const conv = state.conversations[targetId];
+      if (!conv || conv.seatStatus !== 'idle') return;
+
+      const reqId = 'req_' + Date.now();
+      conv.seatStatus = 'requested';
+      conv.messages.push({
+        id: reqId,
+        sender: 'me',
+        kind: 'seat_request',
+        route: conv.routeTag,
+        meta: `${conv.dayLabel} • ${conv.timeLabel}`,
+        status: 'requested',
+        time: getCurrentTimeStr(),
+        read: true
+      });
+
+      renderChatContextBanner();
+      renderChatMessages(true);
+      renderChatArchive();
+
+      setTimeout(() => {
+        conv.seatStatus = 'confirmed';
+        if (conv.seatsLeft > 1) conv.seatsLeft -= 1;
+
+        const msgObj = conv.messages.find(m => m.id === reqId);
+        if (msgObj) msgObj.status = 'confirmed';
+
+        const ride = state.rides.find(r => r.colleagueId === targetId && r.type === 'offer');
+        if (ride && ride.seats > 1) ride.seats -= 1;
+
+        conv.messages.push({
+          id: 'm_' + Date.now(),
+          sender: 'them',
+          kind: 'text',
+          text: 'Posto confermato! Ti aspetto puntuale, mandami pure il tuo punto Maps se ti è più comodo 👍',
+          time: getCurrentTimeStr()
+        });
+
+        if (state.openChatColleagueId === targetId) {
+          renderChatContextBanner();
+          renderChatMessages(false);
+        } else {
+          conv.unread = (conv.unread || 0) + 1;
+          updateUnreadBadge();
+        }
+        renderHomeFeed();
+        renderChatArchive();
+        showToast('Posto confermato dal collega! ✓');
+      }, 1500);
+    }
+
+    // Sends the user's saved Google Maps point from Profile as a clickable chat card
+    function sendSavedMapsPointInChat() {
+      const targetId = state.openChatColleagueId;
+      if (!targetId) return;
+
+      if (!state.savedMapsPoint || !state.savedMapsPoint.url) {
+        showToast('Salva prima un link Google Maps nel Profilo!');
+        return;
+      }
+
+      const conv = state.conversations[targetId];
+      const { label, url } = state.savedMapsPoint;
+
+      conv.messages.push({
+        id: 'mp_' + Date.now(),
+        sender: 'me',
+        kind: 'maps_point',
+        label,
+        url,
+        time: getCurrentTimeStr(),
+        read: true
+      });
+
+      renderChatMessages(true);
+      renderChatArchive();
+
+      setTimeout(() => {
+        conv.messages.push({
+          id: 'm_' + Date.now(),
+          sender: 'them',
+          kind: 'text',
+          text: `Perfetto "${label}", lo apro subito su Maps! Comodissimo anche per me.`,
+          time: getCurrentTimeStr()
+        });
+        if (state.openChatColleagueId === targetId) {
+          renderChatMessages(false);
+        } else {
+          conv.unread = (conv.unread || 0) + 1;
+          updateUnreadBadge();
+        }
+        renderChatArchive();
+      }, 1350);
+    }
+
+    function handleSendMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+      sendChatMessage(text);
+    }
+
+    function sendChatMessage(text) {
+      const targetId = state.openChatColleagueId;
+      if (!targetId) return;
+      const conv = state.conversations[targetId];
+
+      conv.messages.push({
+        id: 'm_' + Date.now(),
+        sender: 'me',
+        kind: 'text',
+        text,
+        time: getCurrentTimeStr(),
+        read: true
+      });
+
+      renderChatMessages(true);
+      renderChatArchive();
+
+      setTimeout(() => {
+        const reply = SIMULATED_REPLIES[conv.messages.length % SIMULATED_REPLIES.length];
+        conv.messages.push({
+          id: 'r_' + Date.now(),
+          sender: 'them',
+          kind: 'text',
+          text: reply,
+          time: getCurrentTimeStr()
+        });
+
+        if (state.openChatColleagueId === targetId) {
+          renderChatMessages(false);
+        } else {
+          conv.unread = (conv.unread || 0) + 1;
+          updateUnreadBadge();
+        }
+        renderChatArchive();
+      }, 1250);
+    }
+
+    // ==================== ADD TRIP MODAL ("+") ====================
+    function openAddTripModal() {
+      state.formDest = CURRENT_USER.preferredDest;
+      state.formAttachMaps = !!(state.savedMapsPoint && state.savedMapsPoint.url);
+      renderFormDest();
+      renderFormMapsAttachment();
+      document.getElementById('modal-add-trip').classList.remove('hidden');
+    }
+
+    function renderFormMapsAttachment() {
+      const btn = document.getElementById('btn-attach-profile-maps');
+      const status = document.getElementById('form-maps-status');
+      const hasSaved = !!(state.savedMapsPoint && state.savedMapsPoint.url);
+
+      if (!hasSaved) {
+        state.formAttachMaps = false;
+        btn.className = 'px-2.5 py-1 rounded-lg text-[11px] font-bold border bg-subtle border-line text-muted';
+        btn.textContent = 'Nessun link';
+        status.textContent = 'Salva prima il tuo punto di partenza Google Maps nella scheda Profilo.';
+        return;
+      }
+
+      if (state.formAttachMaps) {
+        btn.className = 'px-2.5 py-1 rounded-lg text-[11px] font-bold border bg-emeraldSoft border-emeraldOk/35 text-emeraldText active:scale-95';
+        btn.textContent = '✓ Allegato';
+        status.innerHTML = `Incluso nel tragitto: <strong class="text-ink">${escapeHtml(state.savedMapsPoint.label)}</strong>`;
+      } else {
+        btn.className = 'px-2.5 py-1 rounded-lg text-[11px] font-bold border bg-accentWarmSoft border-accentWarmBorder text-accentWarm active:scale-95';
+        btn.textContent = 'Allega dal Profilo';
+        status.textContent = `Disponibile: ${state.savedMapsPoint.label}`;
+      }
+    }
+
+    function toggleAttachProfileMaps() {
+      if (!state.savedMapsPoint || !state.savedMapsPoint.url) {
+        showToast('Salva un link Google Maps nel Profilo!');
+        return;
+      }
+      state.formAttachMaps = !state.formAttachMaps;
+      renderFormMapsAttachment();
+    }
+
+    function setFormType(type) {
+      state.formType = type;
+      const btnOffer = document.getElementById('form-type-offer');
+      const btnReq = document.getElementById('form-type-request');
+      const seatsWrap = document.getElementById('form-seats-wrapper');
+
+      if (type === 'offer') {
+        btnOffer.className = 'py-2 px-3 rounded-lg text-xs font-bold bg-crimson text-white shadow-sm';
+        btnReq.className = 'py-2 px-3 rounded-lg text-xs font-bold text-muted';
+        seatsWrap.classList.remove('hidden');
+      } else {
+        btnReq.className = 'py-2 px-3 rounded-lg text-xs font-bold bg-crimson text-white shadow-sm';
+        btnOffer.className = 'py-2 px-3 rounded-lg text-xs font-bold text-muted';
+        seatsWrap.classList.add('hidden');
+      }
+    }
+
+    function renderFormDest() {
+      document.getElementById('form-dest-container').innerHTML = DESTINATIONS.map(dest => {
+        const active = state.formDest === dest;
+        return `
+          <button type="button" onclick="setFormDest('${dest}')"
+            class="py-2.5 px-3 rounded-xl text-xs font-bold border active:scale-95 flex items-center justify-center gap-1.5 ${
+              active
+                ? 'bg-accentWarmSoft text-accentWarm border-accentWarmBorder'
+                : 'bg-card text-muted border-line hover:text-ink'
+            }">
+            <span class="w-2 h-2 rounded-full ${active ? 'bg-crimson' : 'bg-muted/40'}"></span>
+            ${dest}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function setFormDest(dest) {
+      state.formDest = dest;
+      renderFormDest();
+    }
+
+    function renderFormDays() {
+      document.getElementById('form-days-container').innerHTML = WEEKDAYS.map(day => {
+        const active = state.formDays.includes(day);
+        return `
+          <button type="button" onclick="toggleFormDay('${day}')"
+            class="py-2 rounded-xl text-xs font-bold border active:scale-95 ${
+              active
+                ? 'bg-accentWarmSoft text-accentWarm border-accentWarmBorder'
+                : 'bg-card text-muted border-line hover:text-ink'
+            }">
+            ${day}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function toggleFormDay(day) {
+      if (state.formDays.includes(day)) {
+        state.formDays = state.formDays.filter(d => d !== day);
+      } else {
+        state.formDays.push(day);
+        state.formDays.sort((a, b) => WEEKDAYS.indexOf(a) - WEEKDAYS.indexOf(b));
+      }
+      document.getElementById('form-days-error').classList.add('hidden');
+      renderFormDays();
+    }
+
+    function renderFormSeats() {
+      document.getElementById('form-seats-container').innerHTML = [1, 2, 3, 4].map(n => {
+        const active = state.formSeats === n;
+        return `
+          <button type="button" onclick="setFormSeats(${n})"
+            class="py-2 rounded-xl text-xs font-bold border active:scale-95 ${
+              active
+                ? 'bg-accentWarmSoft text-accentWarm border-accentWarmBorder'
+                : 'bg-card text-muted border-line hover:text-ink'
+            }">
+            ${n} ${n === 1 ? 'posto' : 'posti'}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function setFormSeats(n) {
+      state.formSeats = n;
+      renderFormSeats();
+    }
+
+    function handleAddTripSubmit(e) {
+      e.preventDefault();
+      if (state.formDays.length === 0) {
+        document.getElementById('form-days-error').classList.remove('hidden');
+        return;
+      }
+
+      const newRide = {
+        id: 'r_' + Date.now(),
+        colleagueId: 'me',
+        isMine: true,
+        active: true,
+        type: state.formType,
+        seats: state.formType === 'offer' ? state.formSeats : 0,
+        zone: document.getElementById('input-zone').value,
+        dest: state.formDest,
+        days: [...state.formDays],
+        timeGo: document.getElementById('input-time-go').value,
+        timeBack: document.getElementById('input-time-back').value,
+        note: document.getElementById('input-note').value.trim(),
+        mapsPoint: state.formAttachMaps && state.savedMapsPoint ? { ...state.savedMapsPoint } : null
+      };
+
+      state.rides.unshift(newRide);
+      document.getElementById('input-note').value = '';
+      closeModal('modal-add-trip');
+
+      state.selectedDay = 'ALL';
+      state.selectedDest = 'ALL';
+      state.selectedZone = 'ALL';
+      document.getElementById('filter-zone').value = 'ALL';
+      renderDayPills();
+      renderDestPills();
+      renderHomeFeed();
+      renderMyTrips();
+      switchTab('home');
+      showToast('Tragitto pubblicato su SaliSu!');
+    }
+
+    // ==================== PROFILO: PREFERRED DEST & MY TRIPS ====================
+    function renderProfileDestSelector() {
+      document.getElementById('profile-dest-selector').innerHTML = DESTINATIONS.map(dest => {
+        const active = CURRENT_USER.preferredDest === dest;
+        return `
+          <button type="button" onclick="setPreferredDest('${dest}')"
+            class="py-2 px-3 rounded-xl text-xs font-bold border active:scale-95 flex items-center justify-center gap-1.5 ${
+              active
+                ? 'bg-accentWarmSoft text-accentWarm border-accentWarmBorder'
+                : 'bg-subtle text-muted border-line hover:text-ink'
+            }">
+            <span class="w-2 h-2 rounded-full ${active ? 'bg-crimson' : 'bg-muted/40'}"></span>
+            ${dest}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function setPreferredDest(dest) {
+      CURRENT_USER.preferredDest = dest;
+      renderProfileDestSelector();
+      showToast(`Destinazione preferita: ${dest}`);
+    }
+
+    function renderMyTrips() {
+      const container = document.getElementById('my-trips-list');
+      const myRides = state.rides.filter(r => r.isMine);
+
+      if (myRides.length === 0) {
+        container.innerHTML = `
+          <div class="p-5 rounded-2xl bg-card border border-dashed border-line text-center shadow-card">
+            <p class="text-xs text-muted font-medium">Non hai ancora pubblicato tragitti.</p>
+            <button onclick="openAddTripModal()" class="mt-2 text-xs font-extrabold text-accentWarm hover:underline">
+              + Pubblica ora
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = myRides.map(ride => {
+        const isOffer = ride.type === 'offer';
+        return `
+          <div class="p-3.5 rounded-2xl bg-card border ${ride.active ? 'border-line shadow-card' : 'border-line opacity-70'} space-y-2.5">
+            <div class="flex items-start justify-between gap-2">
+              <div class="min-w-0">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${isOffer ? 'bg-crimsonSoft text-crimson' : 'bg-subtle text-ink'}">
+                    ${isOffer ? `Offro • ${ride.seats}p` : 'Cerco'}
+                  </span>
+                  <span class="text-[11px] font-bold ${ride.active ? 'text-emeraldText' : 'text-muted'}">
+                    ${ride.active ? '● Attivo' : '○ In pausa'}
+                  </span>
+                  ${ride.mapsPoint ? '<span class="px-1.5 py-0.5 rounded bg-accentWarmSoft text-accentWarm text-[9px] font-bold">📍 Maps</span>' : ''}
+                </div>
+                <div class="text-sm font-extrabold text-ink mt-1.5 truncate">${ride.zone} → ${ride.dest}</div>
+                <div class="text-[11px] text-muted font-medium mt-0.5">
+                  ${ride.days.join(', ')} • And. ${ride.timeGo} / Rit. ${ride.timeBack}
+                </div>
+              </div>
+
+              <button onclick="toggleMyRideActive('${ride.id}')" aria-label="Attiva o metti in pausa"
+                class="shrink-0 w-11 h-6 rounded-full p-0.5 flex items-center ${ride.active ? 'bg-emeraldOk' : 'bg-subtle border border-line'}">
+                <span class="w-5 h-5 rounded-full bg-white shadow transition-transform ${ride.active ? 'translate-x-5' : 'translate-x-0'}"></span>
+              </button>
+            </div>
+
+            <div class="pt-2 border-t border-line flex items-center justify-between">
+              <span class="text-[11px] text-muted font-medium">
+                ${ride.active ? 'Visibile nella Home' : 'Nascosto (Smart Working)'}
+              </span>
+              <button onclick="deleteMyRide('${ride.id}')"
+                class="text-[11px] font-bold text-crimson hover:bg-crimsonSoft px-2 py-1 rounded-lg flex items-center gap-1">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+                Elimina
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleMyRideActive(rideId) {
+      const ride = state.rides.find(r => r.id === rideId);
+      if (!ride) return;
+      ride.active = !ride.active;
+      renderMyTrips();
+      renderHomeFeed();
+      showToast(ride.active ? 'Tragitto riattivato' : 'Tragitto messo in pausa');
+    }
+
+    function deleteMyRide(rideId) {
+      state.rides = state.rides.filter(r => r.id !== rideId);
+      renderMyTrips();
+      renderHomeFeed();
+      showToast('Tragitto eliminato');
+    }
+
+    // ==================== COFFEE CROWDFUNDING ====================
+    function openCoffeeModal() {
+      updateCoffeeUI();
+      document.getElementById('modal-coffee').classList.remove('hidden');
+    }
+
+    function updateCoffeeUI() {
+      const gpPct = Math.min(100, Math.round((state.gplayAmount / 25) * 100));
+      const apPct = Math.min(100, Math.round((state.appleAmount / 99) * 100));
+      document.getElementById('gplay-amount').textContent = `$${state.gplayAmount} / $25`;
+      document.getElementById('gplay-bar').style.width = `${gpPct}%`;
+      document.getElementById('apple-amount').textContent = `$${state.appleAmount} / $99`;
+      document.getElementById('apple-bar').style.width = `${apPct}%`;
+    }
+
+    function simulateDonation(amount, platform) {
+      if (state.gplayAmount < 25) {
+        state.gplayAmount = Math.min(25, state.gplayAmount + amount);
+      } else {
+        state.appleAmount = Math.min(99, state.appleAmount + amount);
+      }
+      updateCoffeeUI();
+      showToast(`Grazie per il caffè via ${platform}! ☕`);
+    }
+
+    // ==================== UTILITIES ====================
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    function closeModalOnBackdrop(e, id) {
+      if (e.target.id === id) closeModal(id);
+    }
+
+    function getCurrentTimeStr() {
+      return new Date().toTimeString().slice(0, 5);
+    }
+
+    let toastTimer;
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-text').textContent = msg;
+      toast.classList.remove('opacity-0', 'translate-y-3');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-3');
+      }, 2500);
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function escapeAttr(str) {
+      return String(str).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    }
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

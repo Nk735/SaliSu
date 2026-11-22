@@ -1,0 +1,4 @@
+"use client";
+import {useState} from "react";
+import {createClient} from "@/lib/supabase/client";
+export function MapsPointForm({profile}:{profile:any}){const supabase=createClient();const [label,setLabel]=useState(profile.maps_label||"");const [url,setUrl]=useState(profile.maps_url||"");async function save(){await supabase.from("profiles").update({maps_label:label,maps_url:url}).eq("id",profile.id)}return <div className="card space-y-2 rounded-2xl p-4"><h3 className="text-sm font-extrabold">Punto d'incontro</h3><input value={label} onChange={e=>setLabel(e.target.value)} placeholder="Etichetta" className="w-full rounded-xl border border-line bg-card px-3 py-2.5 text-xs"/><input value={url} onChange={e=>setUrl(e.target.value)} placeholder="Link Google Maps" className="w-full rounded-xl border border-line bg-card px-3 py-2.5 text-xs"/><button onClick={save} className="w-full rounded-xl bg-crimson py-2.5 text-xs font-extrabold text-white">Salva punto</button></div>}

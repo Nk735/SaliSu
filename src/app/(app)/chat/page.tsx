@@ -1,0 +1,6 @@
+"use client";
+import {useEffect,useState} from "react";
+import Link from "next/link";
+import {createClient} from "@/lib/supabase/client";
+
+export default function ChatPage(){const supabase=createClient();const [conversations,setConversations]=useState<any[]>([]);useEffect(()=>{(async()=>{const {data:{user}}=await supabase.auth.getUser();if(!user)return;const {data}=await supabase.from("conversations").select("*,trips(origin_zone,destination,departure_at)").contains("participant_ids",[user.id]).order("created_at",{ascending:false});setConversations(data||[]);})();},[supabase]);return <div className="chat-wallpaper min-h-full px-4 pt-4"><h2 className="text-xl font-extrabold">Messaggi</h2><p className="mb-4 mt-1 text-xs text-muted">Conversazioni sui passaggi</p><div className="space-y-2.5">{conversations.length?conversations.map(c=><Link key={c.id} href={`/chat/${c.id}`} className="card flex items-center gap-3 rounded-2xl p-3"><div className="flex h-11 w-11 items-center justify-center rounded-xl bg-crimson text-xs font-extrabold text-white">SS</div><div><p className="text-sm font-extrabold">{c.trips?.origin_zone||"Conversazione"} → {c.trips?.destination||""}</p><p className="text-[11px] text-muted">Apri chat</p></div></Link>):<div className="card rounded-2xl p-6 text-center text-sm text-muted">Nessuna conversazione.</div>}</div></div>}

@@ -1,0 +1,1 @@
+export function MapsPinCard({label,url}:{label:string|null;url:string|null}){if(!url)return null;return <a href={url} target="_blank" rel="noreferrer" className="block rounded-xl border border-accentWarmBorder bg-accentWarmSoft p-3 text-xs font-bold text-accentWarm">📍 {label||"Apri punto Google Maps"}</a>}

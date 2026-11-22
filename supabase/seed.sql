@@ -1,0 +1,2 @@
+-- I profili vengono creati dal trigger on_auth_user_created dopo la registrazione.
+-- Non inserire qui utenti fittizi: public.profiles.id deve riferire un auth.users esistente.
