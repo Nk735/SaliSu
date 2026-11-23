@@ -22,7 +22,7 @@ export default function ConversationPage() {
 
  async function send(text=body){const value=text.trim();if(!value)return;const {data:{user}}=await supabase.auth.getUser();if(!user)return;await supabase.from("messages").insert({conversation_id:conversationId,sender_id:user.id,body:value});setBody("");}
  async function sendMaps(){const trip=conversation?.trips;if(!trip?.maps_url)return;await send(trip.maps_label?`${trip.maps_label}: ${trip.maps_url}`:trip.maps_url);}
- async function requestSeat(){const {error}=await supabase.rpc("request_trip_seat",{trip_id:conversation.trip_id});if(error){window.alert("Impossibile inviare la richiesta: "+error.message);return;}await loadConversation();}
+ async function requestSeat(){const {error}=await supabase.rpc("request_trip_seat",{p_trip_id:conversation.trip_id});if(error){window.alert("Impossibile inviare la richiesta: "+error.message);return;}await loadConversation();}
  async function acceptSeat(){if(!request)return;const {error}=await supabase.rpc("accept_trip_request",{request_id:request.id});if(error){window.alert("Impossibile confermare: "+error.message);return;}await loadConversation();}
  async function declineSeat(){if(!request)return;const {error}=await supabase.rpc("update_trip_request",{request_id:request.id,next_status:"declined"});if(error){window.alert("Impossibile rifiutare: "+error.message);return;}await loadConversation();}
  async function cancelSeat(){if(!request)return;const {error}=await supabase.rpc("update_trip_request",{request_id:request.id,next_status:"cancelled"});if(error){window.alert("Impossibile annullare: "+error.message);return;}await loadConversation();}
