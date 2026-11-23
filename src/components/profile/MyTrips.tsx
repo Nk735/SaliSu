@@ -1,15 +1,16 @@
 "use client";
-import {useEffect,useState} from "react";
+import {useEffect,useMemo,useState} from "react";
 import {createClient} from "@/lib/supabase/client";
 
 export function MyTrips(){
  const supabase=createClient();const [trips,setTrips]=useState<any[]>([]);
+ const [showDates,setShowDates]=useState(false);
  useEffect(()=>{(async()=>{const {data:{user}}=await supabase.auth.getUser();if(!user)return;const {data}=await supabase.from("trips").select("*,trip_requests(status,seats)").eq("driver_id",user.id).order("departure_at",{ascending:false});setTrips(data||[]);})();},[supabase]);
- async function remove(id:string){if(!window.confirm("Eliminare definitivamente questo tragitto?"))return;await supabase.from("trips").delete().eq("id",id);setTrips(v=>v.filter(t=>t.id!==id));}
- return <div className="card rounded-2xl p-4"><h3 className="mb-3 text-sm font-extrabold">I miei tragitti</h3><div className="space-y-2">{trips.length?trips.map(t=>{
-   const accepted=(t.trip_requests||[]).filter((r:any)=>r.status==="accepted").reduce((sum:number,r:any)=>sum+Number(r.seats||1),0);
-   const date=new Date(t.departure_at);
-   const direction=t.direction||(t.type==="Ritorno"||t.type==="request"?"Ritorno":"Andata");
-   return <div key={t.id} className="flex items-center justify-between gap-2 rounded-xl bg-subtle p-3"><div className="min-w-0"><p className="truncate text-xs font-bold">{t.origin_zone} → {t.destination}</p><p className="mt-1 text-[10px] text-muted">{date.toLocaleDateString("it-IT",{day:"2-digit",month:"short"})} · {date.toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"})} · {direction}{t.is_recurring?" · Ricorrente":""}</p><p className="mt-1 text-[10px] font-bold text-greenText">{accepted} posti prenotati</p></div><button onClick={()=>remove(t.id)} className="shrink-0 text-xs font-bold text-destructive">Elimina</button></div>;
+ async function remove(group:any){if(!window.confirm("Eliminare definitivamente questa serie?"))return;const ids=group.items.map((t:any)=>t.id);const {error}=await supabase.from("trips").delete().in("id",ids);if(error){window.alert("Impossibile eliminare il tragitto: "+error.message);return;}setTrips(v=>v.filter(t=>!ids.includes(t.id)));}
+ const groups=useMemo(()=>{const map=new Map<string,any>();for(const trip of trips){const key=trip.recurrence_group_id?`series:${trip.recurrence_group_id}`:`trip:${trip.id}`;const group=map.get(key);if(group)group.items.push(trip);else map.set(key,{...trip,items:[trip]});}return [...map.values()];},[trips]);
+ return <div className="card rounded-2xl p-4"><div className="mb-3 flex items-center justify-between"><h3 className="text-sm font-extrabold">I miei tragitti</h3>{groups.some(g=>g.items.length>1)&&<label className="flex items-center gap-1.5 text-[10px] font-bold text-muted"><input type="checkbox" checked={showDates} onChange={e=>setShowDates(e.target.checked)} className="accent-[#86BC25]"/> Mostra date</label>}</div><div className="space-y-2">{groups.length?groups.map(group=>{
+   const accepted=group.items.reduce((sum:number,t:any)=>sum+(t.trip_requests||[]).filter((r:any)=>r.status==="accepted").reduce((n:number,r:any)=>n+Number(r.seats||1),0),0);
+   const first=new Date(group.departure_at);const days=Array.from(new Set<number>(group.items.map((t:any)=>new Date(t.departure_at).getDay()))).sort((a,b)=>a-b);const labels=["Dom","Lun","Mar","Mer","Gio","Ven","Sab"];const direction=group.direction||(group.type==="request"?"Richiesta":"Andata");
+   return <div key={group.id} className="rounded-xl bg-subtle p-3"><div className="flex items-center justify-between gap-2"><div className="min-w-0"><p className="truncate text-xs font-bold">{group.origin_zone} → {group.destination}</p><p className="mt-1 text-[10px] text-muted">{group.items.length>1?days.map(d=>labels[d]).join(" · "):first.toLocaleDateString("it-IT",{day:"2-digit",month:"short"})} · {first.toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"})}{group.return_departure_at&&` ↔ ${new Date(group.return_departure_at).toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"})}`} · {direction}</p><p className="mt-1 text-[10px] font-bold text-greenText">{accepted} posti prenotati</p></div><button onClick={()=>remove(group)} className="shrink-0 text-xs font-bold text-destructive">Elimina</button></div>{showDates&&group.items.length>1&&<p className="mt-2 border-t border-line pt-2 text-[10px] text-muted">{group.items.map((t:any)=>new Date(t.departure_at).toLocaleDateString("it-IT",{day:"2-digit",month:"short"})).join(" · ")}</p>}</div>;
  }):<p className="text-xs text-muted">Nessun tragitto pubblicato.</p>}</div></div>;
 }
