@@ -8,11 +8,18 @@ export function AuthForm({ register=false }: { register?:boolean }) {
   const [email,setEmail] = useState(""); const [password,setPassword] = useState("");
   const [fullName,setFullName] = useState(""); const [loading,setLoading] = useState(false);
   const [message,setMessage] = useState(""); const supabase=createClient(); const router=useRouter();
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL || (typeof window === "undefined" ? "" : window.location.origin)).replace(/\/$/, "");
   async function submit(e:React.FormEvent) {
     e.preventDefault(); setLoading(true); setMessage("");
     if (register) {
-      const { error } = await supabase.auth.signUp({ email,password,options:{emailRedirectTo:`${location.origin}/auth/callback`,data:{full_name:fullName}} });
-      setMessage(error ? error.message : "Controlla la tua email per confermare la registrazione.");
+      const { data,error } = await supabase.auth.signUp({ email,password,options:{emailRedirectTo:`${appUrl}/auth/callback`,data:{full_name:fullName}} });
+      if (error) {
+        setMessage(error.message);
+      } else if (data.session) {
+        router.replace("/onboarding");
+      } else {
+        setMessage("Controlla la tua email per confermare la registrazione.");
+      }
     } else {
       const { error } = await supabase.auth.signInWithPassword({email,password});
       if (error) setMessage(error.message); else router.replace("/home");
@@ -21,7 +28,7 @@ export function AuthForm({ register=false }: { register?:boolean }) {
   }
   async function magic() {
     setLoading(true);
-    const {error}=await supabase.auth.signInWithOtp({email,options:{emailRedirectTo:`${location.origin}/auth/callback`}});
+    const {error}=await supabase.auth.signInWithOtp({email,options:{emailRedirectTo:`${appUrl}/auth/callback`}});
     setMessage(error?error.message:"Link magico inviato alla tua email.");
     setLoading(false);
   }

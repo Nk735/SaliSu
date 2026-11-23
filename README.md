@@ -14,6 +14,7 @@ Imposta in `.env.local`:
 
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+- `NEXT_PUBLIC_APP_URL` (locale: `http://localhost:3000`; produzione: URL pubblico HTTPS)
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `CRON_SECRET`
 

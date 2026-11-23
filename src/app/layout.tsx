@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   appleWebApp: { capable: true, statusBarStyle: "default", title: "SaliSu" },
 };
 
-export const viewport: Viewport = { themeColor: "#BE0F2D", width: "device-width", initialScale: 1 };
+export const viewport: Viewport = { themeColor: "#86BC25", width: "device-width", initialScale: 1 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (

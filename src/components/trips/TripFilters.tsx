@@ -1,6 +1,9 @@
 "use client";
 import { DESTINATIONS } from "@/lib/destinations";
 
-export function TripFilters({destination,setDestination,zone,setZone}:{destination:string;setDestination:(v:string)=>void;zone:string;setZone:(v:string)=>void}) {
-  return <div className="sticky top-0 z-20 space-y-2 border-b border-line bg-base/95 px-4 py-3 backdrop-blur-md"><div className="grid grid-cols-3 gap-1.5">{["Tutte",...DESTINATIONS].map(d=><button key={d} onClick={()=>setDestination(d)} className={`rounded-xl border py-2 text-[11px] font-bold ${destination===d?"border-crimson bg-crimson text-white":"border-line bg-card text-muted"}`}>{d}</button>)}</div><select value={zone} onChange={e=>setZone(e.target.value)} className="w-full rounded-xl border border-line bg-card px-3 py-2.5 text-xs font-semibold"><option value="ALL">Tutte le zone di partenza</option>{["Poggiofranco","Carrassi","Japigia","Modugno","Bitonto","Triggiano","Molfetta","San Paolo","Noicattaro"].map(z=><option key={z}>{z}</option>)}</select></div>;
+export function TripFilters({destination,setDestination,direction,setDirection,day,setDay}:{destination:string;setDestination:(v:string)=>void;direction:string;setDirection:(v:string)=>void;day:string;setDay:(v:string)=>void}) {
+ return <div className="sticky top-0 z-20 space-y-2 border-b border-line bg-base/95 px-4 py-2.5 backdrop-blur-md">
+  <div className="grid grid-cols-3 gap-1.5">{["Tutte",...DESTINATIONS].map(d=><button key={d} onClick={()=>setDestination(d)} className={`rounded-xl border py-2 text-[11px] font-bold ${destination===d?"border-brand bg-brand text-[#0E1110]":"border-line bg-card text-muted"}`}>{d}</button>)}</div>
+  <div className="grid grid-cols-2 gap-2"><div className="flex rounded-xl border border-line bg-card p-1">{["Tutte","Andata","Ritorno"].map(v=><button key={v} onClick={()=>setDirection(v)} className={`flex-1 rounded-lg px-1 py-1.5 text-[10px] font-bold ${direction===v?"bg-brand text-[#0E1110]":"text-muted"}`}>{v}</button>)}</div><div className="flex rounded-xl border border-line bg-card p-1">{["Tutti","Oggi","Domani"].map(v=><button key={v} onClick={()=>setDay(v)} className={`flex-1 rounded-lg px-1 py-1.5 text-[10px] font-bold ${day===v?"bg-brand text-[#0E1110]":"text-muted"}`}>{v}</button>)}</div></div>
+ </div>;
 }
