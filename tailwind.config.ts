@@ -18,6 +18,8 @@ export default {
         accentWarmBorder: "var(--accent-warm-border)",
         crimson: "var(--brand)",
         brand: "var(--brand)",
+        brandText: "var(--brand-text)",
+        brandHover: "var(--brand-hover)",
         destructive: "var(--destructive)",
         greenText: "var(--green-text)",
         crimsonSoft: "var(--brand-soft)",

@@ -16,7 +16,7 @@ export function SupportCard({onClose,compact=false}:{onClose?:()=>void;compact?:
       <div className="h-2 overflow-hidden rounded-full bg-subtle"><div className="h-full rounded-full bg-accentWarm" style={{width:`${percent}%`}}/></div>
     </div>
     <div className="mt-3 grid grid-cols-2 gap-2">
-      <a href="https://py.pl/cqEM7JNkVGb0EbPstYkXmA" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 rounded-xl bg-accentWarm px-3 py-2.5 text-xs font-extrabold text-[#0E1110]"><Coffee size={16}/>PayPal</a>
+      <a href="https://py.pl/cqEM7JNkVGb0EbPstYkXmA" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 rounded-xl bg-brand px-3 py-2.5 text-xs font-extrabold text-brandText"><Coffee size={16}/>PayPal</a>
       <a href="https://www.instagram.com/nicolacucinella?hvrq=c2U4ZHNzd2drdmQ=" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 rounded-xl border border-accentWarmBorder bg-accentWarmSoft px-3 py-2.5 text-xs font-extrabold text-accentWarm"><Instagram size={16}/>Instagram</a>
     </div>
   </section>;

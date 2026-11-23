@@ -21,6 +21,6 @@ export function OnboardingForm({ userId, initialName="", initialZone="" }:{userI
     <div><label className="mb-2 block text-xs font-bold">Nome completo</label><input required value={name} onChange={e=>setName(e.target.value)} className="w-full rounded-xl border border-line bg-input px-3.5 py-3 text-sm outline-none"/></div>
     <ZoneAutocomplete value={zone} onChange={setZone}/>
     <div><label className="mb-2 block text-xs font-bold">Destinazione preferita</label><DestinationSelector value={dest} onChange={setDest}/></div>
-    <button disabled={loading||!name||!PUGLIA_MUNICIPALITIES.some((item)=>normalizeMunicipality(item)===normalizeMunicipality(zone))} className="w-full rounded-xl bg-brand py-3 text-sm font-extrabold text-[#0E1110] disabled:opacity-50">Completa onboarding</button>
+    <button disabled={loading||!name||!PUGLIA_MUNICIPALITIES.some((item)=>normalizeMunicipality(item)===normalizeMunicipality(zone))} className="w-full rounded-xl bg-brand py-3 text-sm font-extrabold text-brandText disabled:opacity-50">Completa onboarding</button>
   </form>;
 }
