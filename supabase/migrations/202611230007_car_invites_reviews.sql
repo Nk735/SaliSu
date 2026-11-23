@@ -75,6 +75,9 @@ begin
   if invite_row.requester_id <> auth.uid() then raise exception 'Non autorizzato'; end if;
   if invite_row.status <> 'pending' then raise exception 'Invito già gestito'; end if;
   if p_status not in ('accepted','declined') then raise exception 'Stato non valido'; end if;
+  if p_status='accepted' and not exists (select 1 from public.trips where id=invite_row.trip_id and status='active') then
+    raise exception 'La richiesta è già stata coperta';
+  end if;
   update public.car_invites set status=p_status::public.car_invite_status,updated_at=now() where id=p_invite_id;
   if p_status='accepted' then
     update public.trips set status='completed' where id=invite_row.trip_id and type='request';
