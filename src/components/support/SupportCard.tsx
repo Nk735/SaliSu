@@ -1,7 +1,7 @@
 "use client";
 import { Coffee, Instagram, X } from "lucide-react";
 
-export const CURRENT_AMOUNT = 15;
+export const CURRENT_AMOUNT = 2;
 export const GOAL_AMOUNT = 99;
 export const GOAL_LABEL = "App Store & Server";
 
