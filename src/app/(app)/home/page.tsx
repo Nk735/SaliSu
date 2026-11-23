@@ -16,7 +16,7 @@ export default function HomePage() {
    let result=[...trips];
    if(zone)result=result.filter((trip)=>trip.origin_zone===zone);
    if(FILTER_BY_USER_ZONE&&profile?.starting_zone)result=result.filter((trip)=>trip.origin_zone===profile.starting_zone);
-   if(direction!=="Tutte")result=result.filter((trip)=>((trip.type==="Ritorno"||trip.type==="request")?"Ritorno":"Andata")===direction);
+   if(direction!=="Tutte")result=result.filter((trip)=>(trip.direction||((trip.type==="Ritorno"||trip.type==="request")?"Solo ritorno":"Sola andata"))===direction);
    if(day!=="Tutti"){const base=new Date();base.setHours(0,0,0,0);const target=new Date(base);if(day==="Domani")target.setDate(target.getDate()+1);const next=new Date(target);next.setDate(next.getDate()+1);result=result.filter((trip)=>{const date=new Date(trip.departure_at);return date>=target&&date<next;});}
    if(profile?.starting_zone)result.sort((a,b)=>Number(b.origin_zone===profile.starting_zone)-Number(a.origin_zone===profile.starting_zone)||new Date(a.departure_at).getTime()-new Date(b.departure_at).getTime());
    return result;

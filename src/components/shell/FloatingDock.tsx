@@ -7,7 +7,7 @@ import { CreateTripSheet } from "@/components/trips/CreateTripSheet";
 
 export function FloatingDock() {
   const path=usePathname(); const [open,setOpen]=useState(false);
-  const items=[{href:"/home",label:"Home",icon:House},{href:"/chat",label:"Chat",icon:MessageCircle},{href:"/profile",label:"Profilo",icon:User}];
+  const items=[{href:"/chat",label:"Chat",icon:MessageCircle},{href:"/home",label:"Home",icon:House},{href:"/profile",label:"Profilo",icon:User}];
   return <>
     {open&&<CreateTripSheet onClose={()=>setOpen(false)} />}
     {path.startsWith("/home")&&<button onClick={()=>setOpen(true)} aria-label="Crea tragitto" className="fab-plus absolute bottom-[92px] right-5 z-40 flex items-center justify-center"><Plus size={25} strokeWidth={3}/></button>}
