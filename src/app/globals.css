@@ -41,11 +41,11 @@ body { margin:0; background:var(--bg-outer); color:var(--text-main); font-family
   background-size:20px 20px;
 }
 .apple-dock {
-  background:var(--dock-bg); border:1px solid var(--dock-border); border-radius:30px;
+  background:var(--dock-bg); border:1px solid var(--dock-border); border-radius:9999px;
   box-shadow:var(--dock-shadow); backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%);
 }
 .dock-item.is-active { border:1px solid rgba(134,188,37,.35); }
-.dock-item { border-radius:20px; transition:.18s ease; }
+.dock-item { border-radius:9999px; transition:.18s ease; }
 .dock-item:active { transform:scale(.94); }
 .dock-item.is-active { background:var(--dock-active-bg); }
 .fab-plus {
