@@ -1,61 +1,43 @@
 "use client";
-import {useEffect,useState} from "react";
-import {useParams} from "next/navigation";
+import {useEffect,useMemo,useState} from "react";
+import {useParams,useRouter} from "next/navigation";
+import {ArrowLeft,MapPin,Send,CheckCheck} from "lucide-react";
 import {useMessages} from "@/lib/realtime/useMessages";
-import {ChatPinnedTrip} from "@/components/chat/ChatPinnedTrip";
-import {QuickReplies} from "@/components/chat/QuickReplies";
-import {SeatRequestCard} from "@/components/chat/SeatRequestCard";
-import {MapsPinCard} from "@/components/chat/MapsPinCard";
+
+function initials(name:string){return name.split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join("").toUpperCase()||"S";}
 
 export default function ConversationPage() {
-  const { conversationId } = useParams<{ conversationId: string }>();
-  const { messages, supabase } = useMessages(conversationId);
-  const [conversation, setConversation] = useState<any>(null);
-  const [body, setBody] = useState("");
+ const {conversationId}=useParams<{conversationId:string}>();
+ const router=useRouter();
+ const {messages,supabase}=useMessages(conversationId);
+ const [conversation,setConversation]=useState<any>(null);
+ const [profile,setProfile]=useState<any>(null);
+ const [currentUserId,setCurrentUserId]=useState("");
+ const [request,setRequest]=useState<any>(null);
+ const [body,setBody]=useState("");
 
-  useEffect(() => {
-    if (!conversationId) return;
-    supabase.from("conversations").select("*,trips(*)").eq("id", conversationId).single().then(r => setConversation(r.data));
-  }, [conversationId, supabase]);
+ async function loadConversation(){const {data:{user}}=await supabase.auth.getUser();if(!user)return;setCurrentUserId(user.id);const {data}=await supabase.from("conversations").select("*,trips(*,profiles(full_name,maps_label,maps_url))").eq("id",conversationId).single();setConversation(data);if(data){const colleagueId=(data.participant_ids||[]).find((id:string)=>id!==user.id);if(colleagueId){const {data:colleague}=await supabase.from("profiles").select("*").eq("id",colleagueId).single();setProfile(colleague);}const {data:requests}=await supabase.from("trip_requests").select("*").eq("trip_id",data.trip_id).order("created_at",{ascending:false});const relevant=data.trips?.driver_id===user.id?(requests||[]).find((row:any)=>row.status==="pending"):(requests||[]).find((row:any)=>row.passenger_id===user.id);setRequest(relevant||null);} }
 
-  async function send(text = body) {
-    if (!text.trim()) return;
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-    await supabase.from("messages").insert({ conversation_id: conversationId, sender_id: user.id, body: text.trim() });
-    setBody("");
-  }
+ useEffect(()=>{if(conversationId)loadConversation();localStorage.setItem(`salisu-unread:${conversationId}`,"0");},[conversationId,supabase]);
 
-  async function requestSeat() {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user || !conversation?.trip_id) return;
-    await supabase.from("trip_requests").upsert({ trip_id: conversation.trip_id, passenger_id: user.id, seats: 1, status: "pending" });
-  }
+ async function send(text=body){const value=text.trim();if(!value)return;const {data:{user}}=await supabase.auth.getUser();if(!user)return;await supabase.from("messages").insert({conversation_id:conversationId,sender_id:user.id,body:value});setBody("");}
+ async function sendMaps(){const trip=conversation?.trips;if(!trip?.maps_url)return;await send(trip.maps_label?`${trip.maps_label}: ${trip.maps_url}`:trip.maps_url);}
+ async function requestSeat(){const {error}=await supabase.rpc("request_trip_seat",{trip_id:conversation.trip_id});if(error){window.alert("Impossibile inviare la richiesta: "+error.message);return;}await loadConversation();}
+ async function acceptSeat(){if(!request)return;const {error}=await supabase.rpc("accept_trip_request",{request_id:request.id});if(error){window.alert("Impossibile confermare: "+error.message);return;}await loadConversation();}
+ async function declineSeat(){if(!request)return;const {error}=await supabase.rpc("update_trip_request",{request_id:request.id,next_status:"declined"});if(error){window.alert("Impossibile rifiutare: "+error.message);return;}await loadConversation();}
+ async function cancelSeat(){if(!request)return;const {error}=await supabase.rpc("update_trip_request",{request_id:request.id,next_status:"cancelled"});if(error){window.alert("Impossibile annullare: "+error.message);return;}await loadConversation();}
 
-  return (
-    <div className="chat-messages-bg flex h-full flex-col">
-      <ChatPinnedTrip trip={conversation?.trips} />
-      <div className="flex-1 space-y-2 overflow-y-auto p-3.5">
-        {conversation?.trips && (
-          <>
-            <SeatRequestCard status="idle" onRequest={requestSeat} />
-            <MapsPinCard label={conversation.trips.maps_label} url={conversation.trips.maps_url} />
-          </>
-        )}
-        {messages.map(m => (
-          <div key={m.id} className="max-w-[82%] rounded-2xl rounded-bl-md border border-line bg-card px-3 py-2 text-xs">
-            <p className="font-medium">{m.body}</p>
-            {m.maps_url && <a className="mt-1 block text-accentWarm" href={m.maps_url}>Apri Maps</a>}
-          </div>
-        ))}
-      </div>
-      <div className="border-t border-line bg-card p-3">
-        <QuickReplies onSelect={send} />
-        <div className="mt-2 flex gap-2">
-          <input value={body} onChange={e => setBody(e.target.value)} onKeyDown={e => { if (e.key === "Enter") send(); }} placeholder="Scrivi un messaggio..." className="min-w-0 flex-1 rounded-xl border border-line bg-base px-3 py-2.5 text-sm" />
-          <button onClick={() => send()} className="rounded-xl bg-crimson px-3 text-white">➤</button>
-        </div>
-      </div>
-    </div>
-  );
+ const trip=conversation?.trips;
+ const isDriver=trip?.driver_id===currentUserId;
+ const status=request?.status||null;
+ const name=profile?.full_name||"Pendolare";
+ const dateGroups=useMemo(()=>{const groups=new Map<string,any[]>();messages.forEach(message=>{const date=new Date(message.created_at).toLocaleDateString("it-IT",{day:"2-digit",month:"long",year:"numeric"});if(!groups.has(date))groups.set(date,[]);groups.get(date)?.push(message);});return [...groups.entries()];},[messages]);
+ const statusAction=!isDriver?(status==="pending"?<div className="flex flex-col items-end gap-1"><span className="rounded-full bg-accentWarmSoft px-3 py-1.5 text-[10px] font-extrabold text-accentWarm">In attesa di conferma</span><button onClick={cancelSeat} className="text-[9px] font-bold text-muted underline">Annulla richiesta</button></div>:status==="accepted"?<span className="rounded-full bg-brand px-3 py-1.5 text-[10px] font-extrabold text-[#0E1110]">Posto confermato</span>:status===null&&trip?<button onClick={requestSeat} className="rounded-full bg-brand px-3 py-2 text-[10px] font-extrabold text-[#0E1110]">Richiedi posto</button>:<span className="rounded-full border border-line px-3 py-1.5 text-[10px] font-bold text-muted">Richiesta chiusa</span>):status==="pending"?<div className="flex shrink-0 gap-1.5"><button onClick={acceptSeat} className="rounded-full bg-brand px-3 py-2 text-[10px] font-extrabold text-[#0E1110]">Conferma</button><button onClick={declineSeat} className="rounded-full border border-destructive/40 bg-destructive/10 px-3 py-2 text-[10px] font-extrabold text-destructive">Rifiuta</button></div>:status==="accepted"?<span className="rounded-full bg-brand px-3 py-1.5 text-[10px] font-extrabold text-[#0E1110]">Posto confermato</span>:null;
+
+ return <div className="chat-messages-bg flex h-full flex-col">
+  <header className="flex h-[66px] shrink-0 items-center gap-3 border-b border-line bg-card px-3"><button onClick={()=>router.push("/chat")} aria-label="Indietro" className="flex h-9 w-9 items-center justify-center rounded-full border border-line text-xl">←</button><div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand text-xs font-extrabold text-[#0E1110]">{initials(name)}</div><div className="min-w-0"><p className="truncate text-sm font-extrabold">{name}</p><p className="text-[10px] text-muted">{isDriver?"Guidatore":"Collega"}</p></div></header>
+  {trip&&<div className="mx-3 mt-3 flex shrink-0 items-center gap-2 rounded-2xl border border-line bg-card p-3"><span className="h-2.5 w-2.5 shrink-0 rounded-full bg-brand"/><div className="min-w-0 flex-1"><p className="truncate text-xs font-extrabold">{trip.origin_zone} → {trip.destination}</p><p className="mt-1 text-[9px] font-bold text-muted">{new Date(trip.departure_at).toLocaleDateString("it-IT",{weekday:"short",day:"2-digit",month:"short"})} · {new Date(trip.departure_at).toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"})} · {trip.seats_available||0} posti liberi</p>{isDriver&&status==="pending"&&<p className="mt-1 text-[9px] font-extrabold text-accentWarm">Richiede 1 posto</p>}</div>{statusAction}</div>}
+  <div className="flex-1 overflow-y-auto px-3 py-4">{dateGroups.map(([date,items])=><section key={date} className="mb-4"><div className="mb-3 flex justify-center"><span className="rounded-full border border-line bg-card px-3 py-1 text-[9px] font-extrabold text-muted">{date===new Date().toLocaleDateString("it-IT",{day:"2-digit",month:"long",year:"numeric"})?"OGGI":date.toUpperCase()}</span></div><div className="space-y-2">{items.map((message:any)=>{const mine=message.sender_id===currentUserId;return <div key={message.id} className={`flex ${mine?"justify-end":"justify-start"}`}><div className={`max-w-[78%] px-3 py-2 ${mine?"rounded-2xl rounded-br-md bg-brand text-[#0E1110]":"rounded-2xl rounded-bl-md border border-line bg-card text-textMain"}`}><p className="text-xs font-medium leading-5">{message.body}</p>{message.maps_url&&<a href={message.maps_url} target="_blank" rel="noreferrer" className="mt-1 block text-[11px] font-bold text-accentWarm">Apri punto Maps</a>}<div className={`mt-1 flex items-center justify-end gap-1 text-[9px] ${mine?"text-[#0E1110]/70":"text-muted"}`}><time>{new Date(message.created_at).toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"})}</time>{mine&&<CheckCheck size={12}/>}</div></div></div>;})}</div></section>)}</div>
+  <div className="shrink-0 border-t border-line bg-card p-3"><div className="no-scrollbar mb-2 flex gap-1.5 overflow-x-auto">{["Hai ancora 1 posto?","A che ora passi?","Va bene al punto Maps?"].map(reply=><button key={reply} onClick={()=>send(reply)} className="shrink-0 rounded-full border border-line bg-subtle px-3 py-2 text-[10px] font-bold text-muted">{reply}</button>)}</div><div className="flex h-12 items-center gap-2 rounded-full border border-line bg-input px-2"><button onClick={sendMaps} disabled={!trip?.maps_url} aria-label="Invia punto Maps" className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-accentWarm disabled:opacity-40"><MapPin size={18}/></button><input value={body} onChange={event=>setBody(event.target.value)} onKeyDown={event=>{if(event.key==="Enter")send();}} placeholder="Scrivi un messaggio..." className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted"/><button onClick={()=>send()} disabled={!body.trim()} aria-label="Invia messaggio" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand text-[#0E1110] disabled:opacity-40"><Send size={16}/></button></div></div>
+ </div>
 }
