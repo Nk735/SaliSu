@@ -7,7 +7,7 @@ export function ZoneAutocomplete({value,onChange,label="Comune di partenza",plac
   const matches=useMemo(()=>{
     const normalized=normalizeMunicipality(query);
     if(!normalized)return PUGLIA_MUNICIPALITIES.slice(0,8);
-    return PUGLIA_MUNICIPALITIES.filter((zone)=>normalizeMunicipality(zone).includes(normalized)).slice(0,8);
+    return PUGLIA_MUNICIPALITIES.filter((zone)=>normalizeMunicipality(zone).includes(normalized)).slice(0,30);
   },[query]);
   function select(zone:string){setQuery(zone);onChange(zone);}
   return <div className="relative">

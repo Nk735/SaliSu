@@ -49,6 +49,9 @@ La migrazione più importante per il problema attuale è `supabase/migrations/20
 5. Il cron giornaliero di `vercel.json` chiama `/api/fuel/update` alle 06:00 UTC.
    Anche manualmente: `https://<progetto>.vercel.app/api/fuel/update` con l'Authorization `Bearer <CRON_SECRET>`.
 
+Vercel Web Analytics è integrato nell'app tramite `@vercel/analytics`.
+Dal dashboard Vercel abilita **Analytics** per il progetto dopo il primo deploy.
+
 ## 4. Comandi
 
 ```bash

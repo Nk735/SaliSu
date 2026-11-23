@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { ServiceWorker } from "@/components/shell/ServiceWorker";
 
@@ -13,7 +14,7 @@ export const viewport: Viewport = { themeColor: "#86BC25", width: "device-width"
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="it" suppressHydrationWarning>
-      <body>{children}<ServiceWorker /></body>
+      <body>{children}<ServiceWorker /><Analytics /></body>
     </html>
   );
 }
