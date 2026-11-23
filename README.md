@@ -36,7 +36,9 @@ npx supabase db push
 
 In alternativa, incolla il contenuto di `supabase/migrations/202611220001_initial_salisu.sql` nell'SQL Editor di Supabase. Opzionalmente esegui `supabase/seed.sql`.
 
-La migrazione crea profili, tragitti, richieste posto, conversazioni, messaggi real-time, preferiti, recensioni e prezzi carburante, con policy RLS.
+La migrazione crea profili, tragitti, richieste posto, conversazioni, messaggi real-time, preferiti, recensioni e prezzi carburante, con policy RLS. Per un progetto già esistente, esegui anche tutte le migrazioni successive in ordine cronologico dall'SQL Editor o con `npx supabase db push --remote --include-all`.
+
+La migrazione più importante per il problema attuale è `supabase/migrations/202611240001_trip_recurrence.sql`: aggiunge a `trips` le colonne `direction`, `return_departure_at`, `is_recurring`, `recurrence_days`, `recurrence_until` e `recurrence_group_id`. Dopo averla applicata in Supabase, riavvia o ricarica la cache dello schema dall'app.
 
 ## 3. Deploy su Vercel
 
