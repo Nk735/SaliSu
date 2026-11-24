@@ -18,14 +18,14 @@ const BADGES:Record<string,BadgeDefinition>={
 };
 
 export function ProfileBadges({profileId}:{profileId:string}){
-  const [badgeCodes,setBadgeCodes]=useState<string[]>([]);
-  const [selectedBadge,setSelectedBadge]=useState<(BadgeDefinition & {earned:boolean})|null>(null);
+  const [badgeCodes,setBadgeCodes]=useState<string[]|null>(null);
+  const [selectedBadge,setSelectedBadge]=useState<(BadgeDefinition & {earned:boolean;available:boolean})|null>(null);
 
   useEffect(()=>{
     let active=true;
     const supabase=createClient();
-    void supabase.from("user_badges").select("badge_code").eq("user_id",profileId).then(({data})=>{
-      if(active)setBadgeCodes((data||[]).map((badge:any)=>badge.badge_code));
+    void supabase.from("user_badges").select("badge_code").eq("user_id",profileId).then(({data,error})=>{
+      if(active)setBadgeCodes(error?null:(data||[]).map((badge:any)=>badge.badge_code));
     });
     return ()=>{active=false;};
   },[profileId]);
@@ -34,8 +34,9 @@ export function ProfileBadges({profileId}:{profileId:string}){
     <div className="mt-2 flex flex-wrap gap-1.5" aria-label="Badge e traguardi">
       {Object.entries(BADGES).map(([code,badge])=>{
         const Icon=badge.icon;
-        const earned=badgeCodes.includes(code);
-        return <button key={code} type="button" onClick={()=>setSelectedBadge({...badge,earned})} aria-label={`${badge.label}: ${earned?"ottenuto":"da ottenere"}`} aria-haspopup="dialog" className={`inline-flex max-w-full items-center gap-1 rounded-full border px-2 py-1 text-[10px] font-bold ${earned?"border-accentWarm bg-accentWarm text-ink":"border-line bg-subtle text-muted opacity-65"}`}>
+        const earned=badgeCodes?.includes(code)??false;
+        const status=badgeCodes===null?"dati non disponibili":earned?"ottenuto":"da ottenere";
+        return <button key={code} type="button" onClick={()=>setSelectedBadge({...badge,earned,available:badgeCodes!==null})} aria-label={`${badge.label}: ${status}`} aria-haspopup="dialog" className={`inline-flex max-w-full items-center gap-1 rounded-full border px-2 py-1 text-[10px] font-bold ${earned?"border-accentWarm bg-accentWarm text-ink":"border-line bg-subtle text-muted opacity-65"}`}>
           <Icon size={12} aria-hidden="true"/><span>{badge.label}</span>
         </button>;
       })}
@@ -47,7 +48,7 @@ export function ProfileBadges({profileId}:{profileId:string}){
           <button type="button" onClick={()=>setSelectedBadge(null)} aria-label="Chiudi dettagli badge" className="rounded-lg p-1 text-muted"><X size={17}/></button>
         </div>
         <p className="mt-3 text-sm text-muted">{selectedBadge.description}</p>
-        <p className={`mt-3 text-xs font-extrabold ${selectedBadge.earned?"text-accentWarm":"text-muted"}`}>{selectedBadge.earned?"Ottenuto":"Da ottenere"}</p>
+        <p className={`mt-3 text-xs font-extrabold ${selectedBadge.earned?"text-accentWarm":"text-muted"}`}>{!selectedBadge.available?"Dati badge non disponibili. La migrazione Supabase deve essere applicata.":selectedBadge.earned?"Ottenuto":"Da ottenere"}</p>
       </section>
     </div>}
   </>;
