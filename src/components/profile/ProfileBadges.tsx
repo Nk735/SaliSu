@@ -19,7 +19,7 @@ const BADGES:Record<string,BadgeDefinition>={
 
 export function ProfileBadges({profileId}:{profileId:string}){
   const [badgeCodes,setBadgeCodes]=useState<string[]>([]);
-  const [selectedBadge,setSelectedBadge]=useState<BadgeDefinition|null>(null);
+  const [selectedBadge,setSelectedBadge]=useState<(BadgeDefinition & {earned:boolean})|null>(null);
 
   useEffect(()=>{
     let active=true;
@@ -30,14 +30,12 @@ export function ProfileBadges({profileId}:{profileId:string}){
     return ()=>{active=false;};
   },[profileId]);
 
-  const earnedBadges=badgeCodes.map(code=>BADGES[code]).filter((badge):badge is BadgeDefinition=>Boolean(badge));
-  if(!earnedBadges.length)return null;
-
   return <>
-    <div className="mt-2 flex flex-wrap gap-1.5" aria-label="Badge guadagnati">
-      {earnedBadges.map((badge,index)=>{
+    <div className="mt-2 flex flex-wrap gap-1.5" aria-label="Badge e traguardi">
+      {Object.entries(BADGES).map(([code,badge])=>{
         const Icon=badge.icon;
-        return <button key={`${badge.label}-${index}`} type="button" onClick={()=>setSelectedBadge(badge)} aria-haspopup="dialog" className="inline-flex max-w-full items-center gap-1 rounded-full border border-line bg-subtle px-2 py-1 text-[10px] font-bold text-ink">
+        const earned=badgeCodes.includes(code);
+        return <button key={code} type="button" onClick={()=>setSelectedBadge({...badge,earned})} aria-label={`${badge.label}: ${earned?"ottenuto":"da ottenere"}`} aria-haspopup="dialog" className={`inline-flex max-w-full items-center gap-1 rounded-full border px-2 py-1 text-[10px] font-bold ${earned?"border-accentWarm bg-accentWarm text-ink":"border-line bg-subtle text-muted opacity-65"}`}>
           <Icon size={12} aria-hidden="true"/><span>{badge.label}</span>
         </button>;
       })}
@@ -45,10 +43,11 @@ export function ProfileBadges({profileId}:{profileId:string}){
     {selectedBadge&&<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-5" onClick={event=>{if(event.target===event.currentTarget)setSelectedBadge(null);}}>
       <section role="dialog" aria-modal="true" aria-labelledby="badge-title" className="w-full max-w-xs rounded-2xl border border-line bg-card p-5 shadow-xl">
         <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-2"><BadgeCheck size={19} className="text-accentWarm"/><h3 id="badge-title" className="text-sm font-extrabold text-ink">{selectedBadge.label}</h3></div>
+          <div className="flex items-center gap-2"><BadgeCheck size={19} className={selectedBadge.earned?"text-accentWarm":"text-muted"}/><h3 id="badge-title" className="text-sm font-extrabold text-ink">{selectedBadge.label}</h3></div>
           <button type="button" onClick={()=>setSelectedBadge(null)} aria-label="Chiudi dettagli badge" className="rounded-lg p-1 text-muted"><X size={17}/></button>
         </div>
         <p className="mt-3 text-sm text-muted">{selectedBadge.description}</p>
+        <p className={`mt-3 text-xs font-extrabold ${selectedBadge.earned?"text-accentWarm":"text-muted"}`}>{selectedBadge.earned?"Ottenuto":"Da ottenere"}</p>
       </section>
     </div>}
   </>;
