@@ -40,6 +40,8 @@ La migrazione crea profili, tragitti, richieste posto, conversazioni, messaggi r
 
 La migrazione più importante per il problema attuale è `supabase/migrations/202611240001_trip_recurrence.sql`: aggiunge a `trips` le colonne `direction`, `return_departure_at`, `is_recurring`, `recurrence_days`, `recurrence_until` e `recurrence_group_id`. Dopo averla applicata in Supabase, riavvia o ricarica la cache dello schema dall'app.
 
+La migrazione `supabase/migrations/202611240002_profile_badges.sql` assegna un numero d'iscrizione stabile, crea `user_badges` e assegna automaticamente i badge in base a recensioni, viaggi completati, richieste accettate e inviti auto completati. Applicala dopo le migrazioni precedenti.
+
 ## 3. Deploy su Vercel
 
 1. Importa la repository su Vercel.
