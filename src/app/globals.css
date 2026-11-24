@@ -3,19 +3,6 @@
 @tailwind utilities;
 
 :root {
-  --bg-outer:#F6F5F1; --bg-base:#F6F5F1; --bg-card:#FFFFFF; --bg-subtle:#EFECE6; --bg-input:#EFECE6;
-  --border-main:#E6E4DD; --text-main:#141413; --text-muted:#6E6D68;
-  --brand:#141413; --brand-hover:#2C2C2A; --brand-text:#FFFFFF; --brand-soft:rgba(20,20,19,.08); --brand-border:rgba(20,20,19,.24);
-  --accent-warm:#C26D38; --accent-warm-soft:rgba(194,109,56,.12); --accent-warm-border:rgba(194,109,56,.36);
-  --green-text:#141413; --emerald-soft:rgba(20,20,19,.08); --emerald-text:#141413;
-  --destructive:#DC2626;
-  --chat-dot-color:rgba(20,20,19,.06);
-  --dock-bg:rgba(255,255,255,.72); --dock-border:rgba(255,255,255,.72);
-  --dock-shadow:0 12px 32px rgba(20,20,19,.10),0 2px 8px rgba(20,20,19,.05),inset 0 1px 1px rgba(255,255,255,.18);
-  --dock-active-bg:rgba(20,20,19,.08);
-  color-scheme:light;
-}
-[data-theme="dark"] {
   --bg-outer:#08080A; --bg-base:#08080A; --bg-card:#121215; --bg-subtle:#1B1B20; --bg-input:#1B1B20;
   --border-main:#26262C; --text-main:#F5F5F7; --text-muted:#8E8E93;
   --brand:#FFFFFF; --brand-hover:#E5E5EA; --brand-text:#08080A; --brand-soft:rgba(255,255,255,.12); --brand-border:rgba(255,255,255,.24);
@@ -27,6 +14,19 @@
   --dock-shadow:0 14px 36px rgba(0,0,0,.56),0 2px 10px rgba(0,0,0,.36),inset 0 1px 1px rgba(255,255,255,.18);
   --dock-active-bg:rgba(255,255,255,.12);
   color-scheme:dark;
+}
+[data-theme="light"] {
+  --bg-outer:#F6F5F1; --bg-base:#F6F5F1; --bg-card:#FFFFFF; --bg-subtle:#EFECE6; --bg-input:#EFECE6;
+  --border-main:#E6E4DD; --text-main:#141413; --text-muted:#6E6D68;
+  --brand:#141413; --brand-hover:#2C2C2A; --brand-text:#FFFFFF; --brand-soft:rgba(20,20,19,.08); --brand-border:rgba(20,20,19,.24);
+  --accent-warm:#C26D38; --accent-warm-soft:rgba(194,109,56,.12); --accent-warm-border:rgba(194,109,56,.36);
+  --green-text:#141413; --emerald-soft:rgba(20,20,19,.08); --emerald-text:#141413;
+  --destructive:#DC2626;
+  --chat-dot-color:rgba(20,20,19,.06);
+  --dock-bg:rgba(255,255,255,.72); --dock-border:rgba(255,255,255,.72);
+  --dock-shadow:0 12px 32px rgba(20,20,19,.10),0 2px 8px rgba(20,20,19,.05),inset 0 1px 1px rgba(255,255,255,.18);
+  --dock-active-bg:rgba(20,20,19,.08);
+  color-scheme:light;
 }
 * { box-sizing:border-box; }
 html,body { min-height:100%; }
