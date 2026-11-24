@@ -57,6 +57,21 @@ body { margin:0; background:var(--bg-outer); color:var(--text-main); font-family
 }
 .fab-plus:active { transform:scale(.92); }
 .card { background:var(--bg-card); border:1px solid var(--border-main); box-shadow:0 2px 10px rgba(28,25,23,.045); }
+.milestone-card { background:#191a1d; border-color:rgba(255,255,255,.06); }
+.milestone-card:hover { background:#202125; }
+.milestone-ring-track { stroke:#3b3d42; }
+.milestone-card-icon,.milestone-title { color:#f4f4f5; }
+.milestone-progress-value.is-active { color:#bef264; }
+.milestone-progress-value.is-idle { color:#a1a1aa; }
+.app-logo { filter:brightness(0) invert(1); }
+[data-theme="light"] .milestone-card { background:#f8f7f3; border-color:#e6e4dd; }
+[data-theme="light"] .milestone-card:hover { background:#efede7; }
+[data-theme="light"] .milestone-ring-track { stroke:#dedbd2; }
+[data-theme="light"] .milestone-card-icon,[data-theme="light"] .milestone-title { color:#27272a; }
+[data-theme="light"] .milestone-ring-progress { stroke:#4d7c0f; }
+[data-theme="light"] .milestone-progress-value.is-active { color:#4d7c0f; }
+[data-theme="light"] .milestone-progress-value.is-idle { color:#71717a; }
+[data-theme="light"] .app-logo { filter:none; }
 .liquid-glass { background:var(--dock-bg); border:1px solid var(--dock-border); box-shadow:var(--dock-shadow); backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); }
 .bottom-sheet { animation:slideUp .26s cubic-bezier(.16,1,.3,1) forwards; }
 .toast { animation:toastIn .25s ease-out forwards; }

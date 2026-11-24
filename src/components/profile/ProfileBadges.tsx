@@ -20,10 +20,10 @@ function ProgressRing({icon:Icon,progress}:{icon:LucideIcon;progress:number}){
   const clampedProgress=Math.max(0,Math.min(progress,1));
   return <div className="relative flex h-[68px] w-[68px] items-center justify-center">
     <svg aria-hidden="true" viewBox="0 0 68 68" className="absolute inset-0 h-full w-full -rotate-90">
-      <circle cx="34" cy="34" r="30" fill="none" stroke="#3b3d42" strokeWidth="3.5"/>
-      <circle cx="34" cy="34" r="30" fill="none" stroke={clampedProgress>0?"#a3e635":"#62646a"} strokeLinecap="round" strokeWidth="3.5" strokeDasharray={RING_CIRCUMFERENCE} strokeDashoffset={RING_CIRCUMFERENCE*(1-clampedProgress)}/>
+      <circle cx="34" cy="34" r="30" fill="none" className="milestone-ring-track" strokeWidth="3.5"/>
+      <circle cx="34" cy="34" r="30" fill="none" className="milestone-ring-progress" stroke={clampedProgress>0?"#a3e635":"#62646a"} strokeLinecap="round" strokeWidth="3.5" strokeDasharray={RING_CIRCUMFERENCE} strokeDashoffset={RING_CIRCUMFERENCE*(1-clampedProgress)}/>
     </svg>
-    <Icon size={21} strokeWidth={1.7} className="text-zinc-100" aria-hidden="true"/>
+    <Icon size={21} strokeWidth={1.7} className="milestone-card-icon" aria-hidden="true"/>
   </div>;
 }
 
@@ -97,10 +97,10 @@ export function ProfileBadges({profileId}:{profileId:string}){
         <span className="text-xs font-bold tabular-nums text-muted" aria-label={`${snapshot?unlockedCount:"—"} di 4 sbloccati`}>{snapshot?unlockedCount:"—"}/4</span>
       </div>
       <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
-        {cards.map(card=><button key={card.code} type="button" onClick={()=>setSelectedBadge(card)} aria-haspopup="dialog" className="flex min-h-[150px] min-w-0 flex-col items-center justify-center gap-2 rounded-xl border border-white/[0.06] bg-[#191a1d] px-2 py-3 text-center transition-colors hover:bg-[#202125]">
+        {cards.map(card=><button key={card.code} type="button" onClick={()=>setSelectedBadge(card)} aria-haspopup="dialog" className="milestone-card flex min-h-[150px] min-w-0 flex-col items-center justify-center gap-2 rounded-xl border px-2 py-3 text-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-400">
           <ProgressRing icon={card.icon} progress={card.progress}/>
-          <span className={`max-w-full truncate text-[11px] font-bold tabular-nums ${card.progress>0?"text-lime-300":"text-zinc-400"}`}>{card.value}</span>
-          <span className="line-clamp-2 min-h-8 text-[11px] font-semibold leading-4 text-zinc-100">{card.title}</span>
+          <span className={`milestone-progress-value ${card.progress>0?"is-active":"is-idle"} max-w-full truncate text-[11px] font-bold tabular-nums`}>{card.value}</span>
+          <span className="milestone-title line-clamp-2 min-h-8 text-[11px] font-semibold leading-4">{card.title}</span>
         </button>)}
       </div>
     </section>
