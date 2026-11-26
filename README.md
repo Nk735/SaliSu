@@ -38,7 +38,7 @@ In alternativa, incolla il contenuto di `supabase/migrations/202611220001_initia
 
 La migrazione crea profili, tragitti, richieste posto, conversazioni, messaggi real-time, preferiti, recensioni e prezzi carburante, con policy RLS. Per un progetto già esistente, esegui anche tutte le migrazioni successive in ordine cronologico dall'SQL Editor o con `npx supabase db push --remote --include-all`.
 
-La migrazione più importante per il problema attuale è `supabase/migrations/202611240001_trip_recurrence.sql`: aggiunge a `trips` le colonne `direction`, `return_departure_at`, `is_recurring`, `recurrence_days`, `recurrence_until` e `recurrence_group_id`. Dopo averla applicata in Supabase, riavvia o ricarica la cache dello schema dall'app.
+La migrazione `supabase/migrations/202611240001_trip_recurrence.sql` aggiunge a `trips` le colonne `direction`, `return_departure_at`, `is_recurring`, `recurrence_days`, `recurrence_until` e `recurrence_group_id`. La migrazione `supabase/migrations/202611260001_trip_lifecycle_and_feed_preferences.sql` aggiunge le preferenze delle città nel feed, archivia le chat dei viaggi completati e abilita il completamento automatico. Dopo aver applicato le migrazioni, riavvia o ricarica la cache dello schema dall'app.
 
 La migrazione `supabase/migrations/202611240002_profile_badges.sql` assegna un numero d'iscrizione stabile, crea `user_badges` e assegna automaticamente i badge in base a recensioni, viaggi completati, richieste accettate e inviti auto completati. Applicala dopo le migrazioni precedenti.
 
@@ -48,8 +48,7 @@ La migrazione `supabase/migrations/202611240002_profile_badges.sql` assegna un n
 2. Configura i quattro valori dell'.env in **Settings > Environment Variables**.
 3. Imposta `CRON_SECRET` con un valore casuale sicuro.
 4. Effettua il deploy.
-5. Il cron giornaliero di `vercel.json` chiama `/api/fuel/update` alle 06:00 UTC.
-   Anche manualmente: `https://<progetto>.vercel.app/api/fuel/update` con l'Authorization `Bearer <CRON_SECRET>`.
+5. I cron giornalieri di `vercel.json` chiamano `/api/fuel/update` e `/api/trips/complete-expired` alle 06:00 UTC. Il secondo completa i viaggi oltre 24 ore dall'orario di partenza (o di ritorno) e archivia le chat collegate. Imposta `CRON_SECRET` su Vercel: la route dei viaggi richiede l'header `Authorization: Bearer <CRON_SECRET>`.
 
 Vercel Web Analytics è integrato nell'app tramite `@vercel/analytics`.
 Dal dashboard Vercel abilita **Analytics** per il progetto dopo il primo deploy.
