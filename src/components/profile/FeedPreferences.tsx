@@ -123,7 +123,7 @@ export function FeedPreferences({ profile }: { profile: any }) {
           aria-checked={showOnlyStartingZone}
           disabled={saving}
           onClick={savePreference}
-          className="flex w-full items-center justify-between rounded-xl border border-line bg-input p-3 text-left disabled:opacity-50"
+          className="flex w-full items-center justify-between rounded-xl border border-line bg-input p-3 text-left text-xs font-bold disabled:opacity-50"
         >
           <span>Mostra nel feed solo la tua città di partenza</span>
           <span className={`h-6 w-11 rounded-full p-1 transition ${showOnlyStartingZone ? "bg-brand" : "bg-subtle"}`}>

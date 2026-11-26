@@ -2,17 +2,21 @@
 import {useEffect,useMemo,useState} from "react";
 import {createClient} from "@/lib/supabase/client";
 import {groupTrips} from "@/lib/groupTrips";
+import {isTripExpired} from "@/lib/trips/isTripExpired";
 
 export function MyTrips(){
  const supabase=createClient();const [trips,setTrips]=useState<any[]>([]);
  const [showDates,setShowDates]=useState(false);
+ const [now,setNow]=useState(Date.now());
  const loadTrips=async()=>{const {data:{user}}=await supabase.auth.getUser();if(!user)return;const {data}=await supabase.from("trips").select("*,trip_requests(*,profiles(full_name))").eq("driver_id",user.id).eq("status","active").order("departure_at",{ascending:false});setTrips(data||[]);};
  useEffect(()=>{loadTrips();},[supabase]);
+ useEffect(()=>{const timer=window.setInterval(()=>setNow(Date.now()),60_000);return()=>window.clearInterval(timer);},[]);
  async function remove(group:any){if(!window.confirm("Eliminare definitivamente questa serie?"))return;const ids=group.items.map((t:any)=>t.id);const {error}=await supabase.from("trips").delete().in("id",ids);if(error){window.alert("Impossibile eliminare il tragitto: "+error.message);return;}setTrips(v=>v.filter(t=>!ids.includes(t.id)));}
  async function accept(requestId:string){const {error}=await supabase.rpc("accept_trip_request",{request_id:requestId});if(error){window.alert("Impossibile accettare la richiesta: "+error.message);return;}await loadTrips();}
  async function decline(requestId:string){const {error}=await supabase.rpc("update_trip_request",{request_id:requestId,next_status:"declined"});if(error){window.alert("Impossibile rifiutare la richiesta: "+error.message);return;}await loadTrips();}
- const groups=useMemo(()=>groupTrips(trips).map(group=>({...group,items:group.groupedTrips})),[trips]);
- const pending=trips.flatMap(trip=>(trip.trip_requests||[]).filter((request:any)=>request.status==="pending").map((request:any)=>({...request,trip})));
+ const visibleTrips=useMemo(()=>trips.filter(trip=>!isTripExpired(trip,now)),[trips,now]);
+ const groups=useMemo(()=>groupTrips(visibleTrips).map(group=>({...group,items:group.groupedTrips})),[visibleTrips]);
+ const pending=visibleTrips.flatMap(trip=>(trip.trip_requests||[]).filter((request:any)=>request.status==="pending").map((request:any)=>({...request,trip})));
  return <div className="space-y-4"><div className="card rounded-2xl p-4"><div className="mb-3 flex items-center justify-between"><h3 className="text-sm font-extrabold">I miei tragitti</h3>{groups.some(g=>g.items.length>1)&&<label className="flex items-center gap-1.5 text-[10px] font-bold text-muted"><input type="checkbox" checked={showDates} onChange={e=>setShowDates(e.target.checked)} className="accent-brand"/> Mostra date</label>}</div><div className="space-y-2">{groups.length?groups.map(group=>{
    const accepted=group.items.reduce((sum:number,t:any)=>sum+(t.trip_requests||[]).filter((r:any)=>r.status==="accepted").reduce((n:number,r:any)=>n+Number(r.seats||1),0),0);
    const first=new Date(group.departure_at);const days=Array.from(new Set<number>(group.items.map((t:any)=>new Date(t.departure_at).getDay()))).sort((a,b)=>a-b);const labels=["Dom","Lun","Mar","Mer","Gio","Ven","Sab"];const direction=group.direction||(group.type==="request"?"Richiesta":"Andata");

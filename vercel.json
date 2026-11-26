@@ -3,10 +3,6 @@
     {
       "path": "/api/fuel/update",
       "schedule": "0 6 * * *"
-    },
-    {
-      "path": "/api/trips/complete-expired",
-      "schedule": "0 6 * * *"
     }
   ]
 }
