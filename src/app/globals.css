@@ -40,6 +40,7 @@ body { margin:0; background:var(--bg-outer); color:var(--text-main); font-family
   background-image:radial-gradient(var(--chat-dot-color) 1.25px,transparent 1.25px);
   background-size:20px 20px;
 }
+.toast-stack { bottom:calc(7rem + env(safe-area-inset-bottom)); }
 .apple-dock {
   isolation:isolate;
   background:var(--dock-bg); border:1px solid var(--dock-border); border-radius:9999px;
