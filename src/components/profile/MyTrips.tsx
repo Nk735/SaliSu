@@ -6,7 +6,7 @@ import {groupTrips} from "@/lib/groupTrips";
 export function MyTrips(){
  const supabase=createClient();const [trips,setTrips]=useState<any[]>([]);
  const [showDates,setShowDates]=useState(false);
- const loadTrips=async()=>{const {data:{user}}=await supabase.auth.getUser();if(!user)return;const {data}=await supabase.from("trips").select("*,trip_requests(*,profiles(full_name))").eq("driver_id",user.id).order("departure_at",{ascending:false});setTrips(data||[]);};
+ const loadTrips=async()=>{const {data:{user}}=await supabase.auth.getUser();if(!user)return;const {data}=await supabase.from("trips").select("*,trip_requests(*,profiles(full_name))").eq("driver_id",user.id).eq("status","active").order("departure_at",{ascending:false});setTrips(data||[]);};
  useEffect(()=>{loadTrips();},[supabase]);
  async function remove(group:any){if(!window.confirm("Eliminare definitivamente questa serie?"))return;const ids=group.items.map((t:any)=>t.id);const {error}=await supabase.from("trips").delete().in("id",ids);if(error){window.alert("Impossibile eliminare il tragitto: "+error.message);return;}setTrips(v=>v.filter(t=>!ids.includes(t.id)));}
  async function accept(requestId:string){const {error}=await supabase.rpc("accept_trip_request",{request_id:requestId});if(error){window.alert("Impossibile accettare la richiesta: "+error.message);return;}await loadTrips();}

@@ -11,7 +11,8 @@ export default function HomePage() {
   useEffect(()=>{(async()=>{let q=supabase.from("trips").select("*,profiles(full_name,maps_label,maps_url)").eq("status","active").order("departure_at",{ascending:true});if(profile?.preferred_destination)q=q.eq("destination",profile.preferred_destination);const {data}=await q;setTrips(data||[]);})();},[supabase,profile?.preferred_destination]);
   const filtered=useMemo(()=>{
    let result=[...trips];
-   const startingZones=[profile?.starting_zone,...(profile?.show_only_starting_zone===false?[profile?.additional_starting_zone]:[])].filter(Boolean);
+   const additionalZones=profile?.additional_starting_zones|| (profile?.additional_starting_zone?[profile.additional_starting_zone]:[]);
+   const startingZones=[profile?.starting_zone,...(profile?.show_only_starting_zone===false?additionalZones:[])].filter(Boolean);
    if(startingZones.length)result=result.filter((trip)=>startingZones.includes(trip.origin_zone));
    if(type)result=result.filter((trip)=>trip.type===type);
    if(direction!=="Tutti i tipi")result=result.filter((trip)=>(trip.direction||"Sola andata")===direction);
@@ -20,5 +21,5 @@ export default function HomePage() {
    return result;
   },[trips,type,direction,days,profile]);
   return <><TripFilters type={type} setType={setType} direction={direction} setDirection={setDirection} days={days} setDays={setDays}/>
-  <div className="space-y-3 px-4 pb-36">{supportVisible&&<SupportCard onClose={()=>setSupportVisible(false)}/>} {filtered.length?<TripFeed trips={filtered} currentUserId={userId} selectedDays={days}/>:<div className="card rounded-2xl p-5 text-center"><p className="text-sm font-extrabold">Nessun tragitto disponibile</p></div>}</div></>;
+  <div className="space-y-3 px-4 pb-36 pt-4">{supportVisible&&<SupportCard onClose={()=>setSupportVisible(false)}/>} {filtered.length?<TripFeed trips={filtered} currentUserId={userId} selectedDays={days}/>:<div className="card rounded-2xl p-5 text-center"><p className="text-sm font-extrabold">Nessun tragitto disponibile</p></div>}</div></>;
 }
