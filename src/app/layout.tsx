@@ -4,7 +4,7 @@ import "./globals.css";
 import { ServiceWorker } from "@/components/shell/ServiceWorker";
 
 export const metadata: Metadata = {
-  title: "SaliSu (Alfa Bari)",
+  title: "SaliSu",
   description: "Carpooling quotidiano dei pendolari di Bari",
   appleWebApp: { capable: true, statusBarStyle: "default", title: "SaliSu" },
 };

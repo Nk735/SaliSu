@@ -1,4 +1,4 @@
-# SaliSu (Alfa Bari)
+# SaliSu
 
 PWA full-stack in Next.js App Router per il carpooling quotidiano dei pendolari di Bari.
 
