@@ -4,6 +4,7 @@ import {ProfileCard} from "./ProfileCard";
 import {MapsPointForm} from "./MapsPointForm";
 import {VehicleSettings} from "./VehicleSettings";
 import {ProfileBadges} from "./ProfileBadges";
+import {FeedPreferences} from "./FeedPreferences";
 
 export function ProfileSections({profile}:{profile:any}) {
   const [editing,setEditing]=useState(false);
@@ -14,7 +15,7 @@ export function ProfileSections({profile}:{profile:any}) {
   return <div className="space-y-4">
     <ProfileCard profile={currentProfile} editing={editing} activeSection={activeSection} onToggle={()=>editing?finishEditing():setEditing(true)} onEditSection={setActiveSection} onSaved={updateProfile}/>
     <MapsPointForm profile={currentProfile} editing={editing} active={activeSection==="maps"} onEdit={()=>setActiveSection("maps")} onSaved={updateProfile}/>
-    <ProfileBadges profileId={currentProfile.id}/>
+    <FeedPreferences profile={currentProfile}/>
     <VehicleSettings profile={currentProfile} editing={editing} active={activeSection==="vehicle"} onEdit={()=>setActiveSection("vehicle")} onSaved={updateProfile}/>
   </div>;
 }
