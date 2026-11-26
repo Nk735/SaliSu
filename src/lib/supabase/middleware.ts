@@ -20,7 +20,8 @@ export async function updateSession(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   const path = request.nextUrl.pathname;
   const authPage = path.startsWith("/login") || path.startsWith("/register") || path.startsWith("/forgot-password") || path.startsWith("/reset-password");
-  if (!user && !authPage && !path.startsWith("/auth") && path !== "/") {
+  const tripCompletionCron = path === "/api/trips/complete-expired";
+  if (!user && !authPage && !path.startsWith("/auth") && path !== "/" && !tripCompletionCron) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
