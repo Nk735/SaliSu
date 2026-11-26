@@ -76,8 +76,10 @@ export default function HomePage() {
       setRequestStatuses(statusMap);
       setRatingSummaries(ratingMap);
     }
+    const refreshFeed=()=>void loadFeed();
+    window.addEventListener("salisu:trip-created",refreshFeed);
     void loadFeed();
-    return()=>{cancelled=true;};
+    return()=>{cancelled=true;window.removeEventListener("salisu:trip-created",refreshFeed);};
   },[supabase]);
   const filtered=useMemo(()=>{
    let result=trips.filter((trip)=>!isTripExpired(trip,now));

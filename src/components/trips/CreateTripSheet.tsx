@@ -32,22 +32,35 @@ export function CreateTripSheet({onClose}:{onClose:()=>void}) {
       setRecurrenceUntil(end.toISOString().slice(0,10));
     }
   }
-  async function submit(e:React.FormEvent){e.preventDefault();setSaving(true);const {data:{user}}=await supabase.auth.getUser();if(!user)return setSaving(false);
-    const [h,m]=time.split(":").map(Number);const [rh,rm]=returnTime.split(":").map(Number);
-    const dates:string[]=[];
-    if(recurring){
-      if(!weekdays.length){setSaving(false);return;}
-      const start=new Date(`${date}T12:00:00`);
-      const end=new Date(`${recurrenceUntil}T12:00:00`);
-      for(let cursor=new Date(start);cursor<=end;cursor.setDate(cursor.getDate()+1)){if(weekdays.includes(cursor.getDay()))dates.push(cursor.toISOString().slice(0,10));}
-    }else{dates.push(date);}
-    if(!dates.length){setSaving(false);return;}
-    const recurrenceGroupId=recurring?crypto.randomUUID():null;
-    const rows=dates.map((dateValue)=>{const departure=new Date(`${dateValue}T12:00:00`);departure.setHours(h,m,0,0);const returnDeparture=direction==="Andata e ritorno"?(()=>{const value=new Date(`${dateValue}T12:00:00`);value.setHours(rh,rm,0,0);return value.toISOString();})():null;return {driver_id:user.id,type,direction,origin_zone:zone,destination:dest,departure_at:departure.toISOString(),return_departure_at:returnDeparture,seats_available:type==="offer"?seats:0,price_per_passenger:type==="offer"?final:0,fuel_type:fuel,distance_km:km,note:null,maps_label:profileMaps.label,maps_url:profileMaps.url,status:"active",is_recurring:recurring,recurrence_days:recurring?weekdays:null,recurrence_until:recurring?recurrenceUntil:null,recurrence_group_id:recurrenceGroupId};});
-    const {error}=await supabase.from("trips").insert(rows);
-    setSaving(false);
-    if(error){showToast("Impossibile pubblicare il tragitto: "+error.message,"error");return;}
-    onClose();location.reload();
+  async function submit(e:React.FormEvent){
+    e.preventDefault();
+    setSaving(true);
+    try{
+      const {data:{user},error:userError}=await supabase.auth.getUser();
+      if(userError){showToast("Impossibile verificare l'utente: "+userError.message,"error");return;}
+      if(!user){showToast("Accedi di nuovo per pubblicare un tragitto.","error");return;}
+      const [h,m]=time.split(":").map(Number);const [rh,rm]=returnTime.split(":").map(Number);
+      const dates:string[]=[];
+      if(recurring){
+        if(!weekdays.length){showToast("Seleziona almeno un giorno per la ricorrenza.","error");return;}
+        const start=new Date(`${date}T12:00:00`);
+        const end=new Date(`${recurrenceUntil}T12:00:00`);
+        for(let cursor=new Date(start);cursor<=end;cursor.setDate(cursor.getDate()+1)){if(weekdays.includes(cursor.getDay()))dates.push(cursor.toISOString().slice(0,10));}
+      }else{dates.push(date);}
+      if(!dates.length){showToast("Nessuna data disponibile per questo tragitto.","error");return;}
+      const recurrenceGroupId=recurring?crypto.randomUUID():null;
+      const rows=dates.map((dateValue)=>{const departure=new Date(`${dateValue}T12:00:00`);departure.setHours(h,m,0,0);const returnDeparture=direction==="Andata e ritorno"?(()=>{const value=new Date(`${dateValue}T12:00:00`);value.setHours(rh,rm,0,0);return value.toISOString();})():null;return {driver_id:user.id,type,direction,origin_zone:zone,destination:dest,departure_at:departure.toISOString(),return_departure_at:returnDeparture,seats_available:type==="offer"?seats:0,price_per_passenger:type==="offer"?final:0,fuel_type:fuel,distance_km:km,note:null,maps_label:profileMaps.label,maps_url:profileMaps.url,status:"active",is_recurring:recurring,recurrence_days:recurring?weekdays:null,recurrence_until:recurring?recurrenceUntil:null,recurrence_group_id:recurrenceGroupId};});
+      const {error}=await supabase.from("trips").insert(rows);
+      if(error){showToast("Impossibile pubblicare il tragitto: "+error.message,"error");return;}
+      window.dispatchEvent(new Event("salisu:trip-created"));
+      onClose();
+      showToast("Tragitto pubblicato");
+    }catch(error){
+      console.error("Impossibile pubblicare il tragitto:",error);
+      showToast("Si è verificato un errore durante la pubblicazione. Riprova.","error");
+    }finally{
+      setSaving(false);
+    }
   }
   return <div onClick={e=>{if(e.target===e.currentTarget)onClose()}} className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-[2px]"><div className="bottom-sheet max-h-[92dvh] w-full max-w-[430px] overflow-hidden rounded-t-3xl border border-line bg-card shadow-2xl"><div className="flex items-center justify-between border-b border-line bg-card px-5 py-4"><div><h3 className="font-extrabold">Nuovo tragitto</h3><p className="text-[11px] text-muted">Solo Bari Centro e Lungomare</p></div><button onClick={onClose} className="rounded-xl p-2 text-muted hover:bg-subtle">✕</button></div><form onSubmit={submit} className="app-scroll max-h-[calc(92dvh-70px)] space-y-4 overflow-y-auto p-5">
     <div className="grid grid-cols-2 rounded-xl border border-line bg-card p-1"><button type="button" onClick={()=>setType("offer")} className={`rounded-lg py-2 text-xs font-bold ${type==="offer"?"bg-brand text-brandText":"text-muted"}`}>🚗 Offro passaggio</button><button type="button" onClick={()=>setType("request")} className={`rounded-lg py-2 text-xs font-bold ${type==="request"?"bg-brand text-brandText":"text-muted"}`}>🙋 Cerco passaggio</button></div>
